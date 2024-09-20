@@ -1,0 +1,10 @@
+# ninja log v6
+1	327	7485015212856703	CMakeFiles/Main.dir/main.cpp.obj	985cf379cf2ee32e
+329	448	7485015216129777	Main.exe	91057951f2638da2
+1	307	7485020391296191	CMakeFiles/Compiler.dir/main.cpp.obj	734261b48615839b
+309	421	7485020394367871	Compiler.exe	3ff7cec71f207752
+19	106	7485302989724092	CMakeFiles/Compiler.dir/Lexer/src/Lexer.cpp.obj	a4bf49261a4c924f
+4	340	7485302989566807	CMakeFiles/Compiler.dir/main.cpp.obj	734261b48615839b
+5	416	7485307812072310	CMakeFiles/Compiler.dir/Lexer/src/TokenType.cpp.obj	1244380c6f5a265b
+8	700	7485392685573048	CMakeFiles/Compiler.dir/Lexer/src/TokenType.cpp.obj	1244380c6f5a265b
+701	890	7485392692497274	Compiler.exe	50bd319a2dcc272d
