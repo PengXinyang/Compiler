@@ -1,4 +1,4 @@
-# Install script for directory: D:/ziliao/编译原理/实验/词法分析
+# Install script for directory: D:/ziliao/Compile Lab
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "D:/ziliao/编译原理/实验/词法分析/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "D:/ziliao/Compile Lab/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

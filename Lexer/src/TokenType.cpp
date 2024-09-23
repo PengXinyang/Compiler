@@ -1,18 +1,17 @@
 //
-// Created by Dell on 24-9-20.
+// Created by PengXinyang on 24-9-20.
 //
 
 #include "../include/TokenType.h"
 using namespace std;
 
-map<string, string> TokenType::tokenTypeMap;
 TokenType::TokenType() {
     tokenTypeMap["Ident"] = "IDENFR";
     tokenTypeMap["IntConst"] = "INTCON";
     tokenTypeMap["StringConst"] = "STRCON";
-    tokenTypeMap["CharConst"] = "CHARCON";
+    tokenTypeMap["CharConst"] = "CHRCON";
     tokenTypeMap["main"] = "MAINTK";
-    tokenTypeMap["const"] = "CONST";
+    tokenTypeMap["const"] = "CONSTTK";
     tokenTypeMap["int"] = "INTTK";
     tokenTypeMap["char"] = "CHARTK";
     tokenTypeMap["break"] = "BREAKTK";
@@ -53,6 +52,9 @@ TokenType::TokenType() {
 TokenType* TokenType::g_pTokenType = new TokenType();
 
 TokenType* TokenType::getTokenTypeInstance() {
+    if(g_pTokenType == nullptr) {
+        g_pTokenType = new TokenType();
+    }
     return g_pTokenType;
 }
 void TokenType::deleteTokenTypeInstance() {

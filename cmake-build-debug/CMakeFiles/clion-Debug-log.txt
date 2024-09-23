@@ -1,4 +1,4 @@
-"D:\Program Files\JetBrains\CLion 2024.2.2\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=D:/Program Files/JetBrains/CLion 2024.2.2/bin/ninja/win/x64/ninja.exe" -G Ninja -S D:\ziliao\编译原理\实验\词法分析 -B D:\ziliao\编译原理\实验\词法分析\cmake-build-debug
+"D:\Program Files\JetBrains\CLion 2024.2.2\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=D:/Program Files/JetBrains/CLion 2024.2.2/bin/ninja/win/x64/ninja.exe" -G Ninja -S "D:\ziliao\Compile Lab" -B "D:\ziliao\Compile Lab\cmake-build-debug"
 -- Configuring done (0.2s)
 -- Generating done (0.0s)
--- Build files have been written to: D:/ziliao/编译原理/实验/词法分析/cmake-build-debug
+-- Build files have been written to: D:/ziliao/Compile Lab/cmake-build-debug
