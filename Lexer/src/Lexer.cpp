@@ -193,7 +193,13 @@ void Lexer::retract() {
 //查找token是不是保留字
 //有个小漏洞：变量名是Ident，IntConst等
 int Lexer::reserver() {
-	return tokenTypeMap.find(token)!=tokenTypeMap.end();
+	if(tokenTypeMap.find(token)!=tokenTypeMap.end()) {
+		return 1;
+	}
+	else if(token=="Ident" || token == "IntConst" || token == "StringConst" || token == "CharConst") {
+		return 1;
+	}
+	else return 0;
 }
 //将token数字字符串转成整数
 long long Lexer::transNum(const string &token) {
@@ -374,6 +380,7 @@ int Lexer::handle_next() {//返回类别码
 		else {
 			retract();
 			lexerError();
+			tokenMap[i++] = make_pair(tokenTypeMap["&&"],"&");
 		}
 	}
 	else if(isOr()) {
@@ -386,6 +393,7 @@ int Lexer::handle_next() {//返回类别码
 		else {
 			retract();
 			lexerError();
+			tokenMap[i++] = make_pair(tokenTypeMap["||"],"|");
 		}
 	}
 	/*处理除号和注释*/
@@ -393,12 +401,14 @@ int Lexer::handle_next() {//返回类别码
 		catToken();
 		getChar();
 		if(isDivi()) {
-			//两个'/'，说明本行是注释,直接读到'\n'
+			//两个'/'，说明本行是注释,直接读到'\n'；如果注释是最后一行，没有换行符，那么跳出循环。
 			while(!isNewLine()) {
+				if((*charPtr) == 0) break;
 				getChar();
 			}
-			//指针回退一位，便于下一次处理时读到换行符，让行数+1
-			retract();
+			//如果当前是换行符，则指针回退一位，便于下一次处理时读到换行符，让行数+1
+			//如果注释是最后一行，没有换行符
+			if(isNewLine()) retract();
 		}
 		else if (isStar()) {/*判断是否为星号*/
 			/*处理注释，可能为多行，读到换行符则行号+1*/

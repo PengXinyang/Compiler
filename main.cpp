@@ -14,5 +14,7 @@ int main() {
     lexer->handleSource();
     lexer->printWrong();
     lexer->printRight();
+    Lexer::deleteLexerInstance();
+    TokenType::deleteTokenTypeInstance();
     return 0;
 }

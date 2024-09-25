@@ -37,7 +37,7 @@ private:
     map<int,char> lineWrong;
     string token;//当前处理的单词
     char Char = ' ';//存取当前读进的字符
-    int num = 0;//存入当前读入的整型变量
+    long long num = 0;//存入当前读入的整型变量
     char* charPtr = nullptr;//字符指针
     int lineNum = 1;//行数
     string tokenType;
