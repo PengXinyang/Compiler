@@ -7,7 +7,19 @@
 #include <algorithm>
 #include <map>
 #include <string>
+#include <utility>
 using namespace std;
+struct Word {
+    string word;//单词名字
+    int line_num;//行号
+    string word_type;//单词类型
+    Word(){word = "", line_num = 0; word_type = "";}
+    Word(string word_type,string word,int lin_num) {
+        this->word = move(word);
+        this->word_type = move(word_type);
+        this->line_num = lin_num;
+    }
+};
 
 class Lexer {
 public:
@@ -16,7 +28,7 @@ public:
     //初始化，让指针指向源代码source
     void setCharPtr(char*source);
     //处理下一个单词
-    pair<string, string> handleNext();
+    Word handleNext();
     //处理的具体过程
     int handle_next();
     //完全处理所有的单词
@@ -32,7 +44,7 @@ public:
 private:
     static Lexer* lexerInstance;
     //存储单词类别和单词值
-    map<int,pair<string, string>> tokenMap;
+    map<int,Word> tokenMap;
     //行号+错误码
     map<int,char> lineWrong;
     string token;//当前处理的单词

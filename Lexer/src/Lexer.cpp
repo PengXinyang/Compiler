@@ -32,16 +32,16 @@ void Lexer::deleteLexerInstance() {
 string Lexer::getToken() {
 	return token;
 }
-pair<string, string> Lexer::handleNext() {
+Word Lexer::handleNext() {
 	handle_next();
-	pair<string, string> p = make_pair(tokenType, token);
-	return p;
+	Word word = Word(tokenType, token,lineNum);
+	return word;
 }
 void Lexer::handleSource() {
 	while(charPtr && *charPtr) {
-		pair<string, string> p = handleNext();
-		if(!p.first.empty()&&!p.second.empty()) {
-			tokenMap.insert(make_pair(i++,p));
+		Word p = handleNext();
+		if(!p.word_type.empty()&&!p.word.empty()) {
+			tokenMap[i++] = p;
 		}
 	}
 }
@@ -51,7 +51,7 @@ void Lexer::printRight() {
 	if(lineWrong.empty()) {
 		FILE*fp = fopen("lexer.txt", "w");
 		for(const auto&[fst,snd]:tokenMap) {
-			fprintf(fp,"%s %s\n",snd.first.c_str(),snd.second.c_str());
+			fprintf(fp,"%s %s\n",snd.word_type.c_str(),snd.word.c_str());
 		}
 		fclose(fp);
 	}
@@ -380,7 +380,8 @@ int Lexer::handle_next() {//返回类别码
 		else {
 			retract();
 			lexerError();
-			tokenMap[i++] = make_pair(tokenTypeMap["&&"],"&");
+			Word word = Word(tokenTypeMap["&&"],"&&",lineNum);
+			tokenMap[i++] = word;
 		}
 	}
 	else if(isOr()) {
@@ -393,7 +394,8 @@ int Lexer::handle_next() {//返回类别码
 		else {
 			retract();
 			lexerError();
-			tokenMap[i++] = make_pair(tokenTypeMap["||"],"|");
+			Word word = Word(tokenTypeMap["||"],"||",lineNum);
+			tokenMap[i++] = word;
 		}
 	}
 	/*处理除号和注释*/

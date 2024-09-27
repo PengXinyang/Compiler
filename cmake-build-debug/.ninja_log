@@ -51,3 +51,7 @@
 785	985	7489572757047153	Compiler.exe	6174bdff3da4e074
 5	745	7489574185852087	CMakeFiles/Compiler.dir/Lexer/src/Lexer.cpp.obj	a45934ce25933e0a
 746	967	7489574193263779	Compiler.exe	6174bdff3da4e074
+8	1889	7491373503392376	CMakeFiles/Compiler.dir/main.cpp.obj	51a3717e0906c555
+5	456	7491375790788361	CMakeFiles/Compiler.dir/main.cpp.obj	51a3717e0906c555
+21	661	7491375790954019	CMakeFiles/Compiler.dir/Lexer/src/Lexer.cpp.obj	a45934ce25933e0a
+661	1951	7491375797347723	Compiler.exe	6174bdff3da4e074
