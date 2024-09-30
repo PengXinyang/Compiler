@@ -2,18 +2,25 @@
 #include "./Lexer/include/Lexer.h"
 #include<iostream>
 
+#include "ErrorHandle/include/ErrorPrint.h"
 #include "Lexer/include/TokenType.h"
+#include "Parser/include/Parser.h"
 using namespace std;
 string source;
 
 int main() {
     source = FileProcess::readFileIntoString("testfile.txt");
+    //下面是词法分析处理程序
     TokenType* tokenTypeMain = TokenType::getTokenTypeInstance();
     Lexer *lexer = Lexer::getLexerInstance();
     lexer->setCharPtr(const_cast<char *>(source.c_str()));
     lexer->handleSource();
-    lexer->printWrong();
-    lexer->printRight();
+    //下面是语法分析处理程序
+    Parser* parser = Parser::getParserInstance();
+    parser->ParserHandle();
+    ErrorPrint::printfError();
+    parser->printParser();
+    //删除类
     Lexer::deleteLexerInstance();
     TokenType::deleteTokenTypeInstance();
     return 0;

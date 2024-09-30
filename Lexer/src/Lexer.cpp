@@ -5,6 +5,7 @@
 #include "../include/Lexer.h"
 #include <map>
 
+#include "../../ErrorHandle/include/ErrorPrint.h"
 #include "../include/TokenType.h"
 
 TokenType* tokenTypeN = TokenType::getTokenTypeInstance();
@@ -66,6 +67,12 @@ void Lexer::printWrong() {
 	fclose(fp);
 	}
 }
+
+//获取tokenMap
+map<int, Word> Lexer::getWordMap() {
+	return tokenMap;
+}
+
 
 //读字符过程
 void Lexer::getChar() {
@@ -208,6 +215,7 @@ long long Lexer::transNum(const string &token) {
 //错误处理
 void Lexer::lexerError() {
 	lineWrong[lineNum] = 'a';
+	ErrorPrint::printError(ErrorCategory::illegal_symbol, lineNum);
 }
 
 //词法分析程序

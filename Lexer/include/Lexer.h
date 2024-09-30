@@ -41,6 +41,8 @@ public:
     void printWrong();
     //错误处理
     void lexerError();
+    //获取tokenMap
+    map<int,Word> getWordMap();
 private:
     static Lexer* lexerInstance;
     //存储单词类别和单词值
