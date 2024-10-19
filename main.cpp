@@ -5,6 +5,7 @@
 #include "ErrorHandle/include/ErrorPrint.h"
 #include "Lexer/include/TokenType.h"
 #include "Parser/include/Parser.h"
+#include "Symbol/include/SymbolHandle.h"
 using namespace std;
 string source;
 
@@ -18,8 +19,13 @@ int main() {
     //下面是语法分析处理程序
     Parser* parser = Parser::getParserInstance();
     parser->ParserHandle();
+    SymbolHandle* symbol_handle = SymbolHandle::getSymbolHandleInstance();
+    symbol_handle->handleSymbol();
     ErrorPrint::printfError();
-    parser->printParser();
+    if(!ErrorPrint::isError) {
+        //parser->printParser();
+        symbol_handle->printSymbol();
+    }
     //删除类
     Lexer::deleteLexerInstance();
     TokenType::deleteTokenTypeInstance();

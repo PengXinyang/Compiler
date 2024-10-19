@@ -6,6 +6,7 @@
 #include<cstdio>
 TreeNode *ParserTree::catchTree(TreeNode* root, const Word &word) {
     auto* son = new TreeNode(word);
+    son->father = root;
     root->sonNode.push_back(son);
     root->son_num++;
     return root;
@@ -17,6 +18,7 @@ TreeNode *ParserTree::createTree(const Word &word) {
 }
 
 TreeNode *ParserTree::catchTree(TreeNode *root, TreeNode *son) {
+    son->father = root;
     root->sonNode.push_back(son);
     root->son_num++;
     return root;
@@ -63,3 +65,20 @@ TreeNode* ParserTree::adjustTree(TreeNode *root, const Word &word) {
     delete root;
     return parent;
 }
+
+// 递归函数，查找子树中的所有叶子节点
+void ParserTree::getLeafNodes(TreeNode *root, vector<TreeNode *> &leafNodes) {
+    // 如果当前节点为空，直接返回
+    if (root == nullptr) return;
+
+    // 如果当前节点是叶子节点，加入结果
+    if (root->son_num == 0) {
+        leafNodes.push_back(root);
+    } else {
+        // 否则递归查找子节点
+        for (TreeNode* child : root->sonNode) {
+            getLeafNodes(child, leafNodes);
+        }
+    }
+}
+

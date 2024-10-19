@@ -103,6 +103,18 @@ build CMakeFiles/Compiler.dir/Parser/src/ParserTree.cpp.obj: CXX_COMPILER__Compi
   OBJECT_DIR = CMakeFiles\Compiler.dir
   OBJECT_FILE_DIR = CMakeFiles\Compiler.dir\Parser\src
 
+build CMakeFiles/Compiler.dir/Symbol/src/Symbol.cpp.obj: CXX_COMPILER__Compiler_unscanned_Debug D$:/ziliao/Compile$ Lab/Symbol/src/Symbol.cpp || cmake_object_order_depends_target_Compiler
+  DEP_FILE = CMakeFiles\Compiler.dir\Symbol\src\Symbol.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Compiler.dir
+  OBJECT_FILE_DIR = CMakeFiles\Compiler.dir\Symbol\src
+
+build CMakeFiles/Compiler.dir/Symbol/src/SymbolHandle.cpp.obj: CXX_COMPILER__Compiler_unscanned_Debug D$:/ziliao/Compile$ Lab/Symbol/src/SymbolHandle.cpp || cmake_object_order_depends_target_Compiler
+  DEP_FILE = CMakeFiles\Compiler.dir\Symbol\src\SymbolHandle.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Compiler.dir
+  OBJECT_FILE_DIR = CMakeFiles\Compiler.dir\Symbol\src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Compiler
@@ -111,7 +123,7 @@ build CMakeFiles/Compiler.dir/Parser/src/ParserTree.cpp.obj: CXX_COMPILER__Compi
 #############################################
 # Link the executable Compiler.exe
 
-build Compiler.exe: CXX_EXECUTABLE_LINKER__Compiler_Debug CMakeFiles/Compiler.dir/main.cpp.obj CMakeFiles/Compiler.dir/Lexer/src/Lexer.cpp.obj CMakeFiles/Compiler.dir/Lexer/src/TokenType.cpp.obj CMakeFiles/Compiler.dir/Lexer/src/FileProcess.cpp.obj CMakeFiles/Compiler.dir/Parser/src/TokenScanner.cpp.obj CMakeFiles/Compiler.dir/Parser/src/Parser.cpp.obj CMakeFiles/Compiler.dir/ErrorHandle/src/ErrorCategory.cpp.obj CMakeFiles/Compiler.dir/ErrorHandle/src/ErrorPrint.cpp.obj CMakeFiles/Compiler.dir/Parser/src/ParserTree.cpp.obj
+build Compiler.exe: CXX_EXECUTABLE_LINKER__Compiler_Debug CMakeFiles/Compiler.dir/main.cpp.obj CMakeFiles/Compiler.dir/Lexer/src/Lexer.cpp.obj CMakeFiles/Compiler.dir/Lexer/src/TokenType.cpp.obj CMakeFiles/Compiler.dir/Lexer/src/FileProcess.cpp.obj CMakeFiles/Compiler.dir/Parser/src/TokenScanner.cpp.obj CMakeFiles/Compiler.dir/Parser/src/Parser.cpp.obj CMakeFiles/Compiler.dir/ErrorHandle/src/ErrorCategory.cpp.obj CMakeFiles/Compiler.dir/ErrorHandle/src/ErrorPrint.cpp.obj CMakeFiles/Compiler.dir/Parser/src/ParserTree.cpp.obj CMakeFiles/Compiler.dir/Symbol/src/Symbol.cpp.obj CMakeFiles/Compiler.dir/Symbol/src/SymbolHandle.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Compiler.dir

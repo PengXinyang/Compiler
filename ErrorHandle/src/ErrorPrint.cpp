@@ -30,5 +30,11 @@ void ErrorPrint::printError(ErrorCategory error_category, int line_num) {
     pair<int,char> error;
     error.first = line_num;
     error.second = ErrorMap[error_category];
-    error_vector.push_back(error);
+    int flag = 0;//标记本行有没有错误
+    for(const auto&[line_num,error_type]:error_vector) {
+        if(error.first == line_num) {
+            flag = 1;//本行已经有错误，不再添加
+        }
+    }
+    if(!flag) error_vector.push_back(error);
 }

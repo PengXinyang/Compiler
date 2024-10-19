@@ -26,6 +26,10 @@ Parser *Parser::getParserInstance() {
     return instance;
 }
 
+TreeNode *Parser::getPaserTree(){
+    return ParserRoot;
+}
+
 TreeNode *Parser::CompUnit() {
     Word word;
     word.word="<CompUnit>";
@@ -130,6 +134,8 @@ TreeNode *Parser::ConstDef() {
             if(preWords[0].word!="]") {
                 //不是右括号，需要报k型错误
                 ErrorPrint::printError(ErrorCategory::r_bracket_lack,now_word.line_num);
+                //再读，下一位应当是等号
+                now_word=tokenScanner->readNowWord();
             }
             else {
                 //是右括号，连接
@@ -769,7 +775,7 @@ TreeNode *Parser::PrimaryExp() {
     word.word = "<PrimaryExp>";
     TreeNode* root = ParserTree::createTree(word);
     //预读，根据预读情况分类
-    preWords=tokenScanner->preReadWords(1);
+    preWords=tokenScanner->preReadWords(2);
     if(preWords[0].word=="(") {
         now_word=tokenScanner->readNowWord();
         ParserTree::catchTree(root, now_word);
@@ -786,8 +792,9 @@ TreeNode *Parser::PrimaryExp() {
         }
     }
     //如果是ident，就是lVal
-    else if(preWords[0].word_type=="IDENFR") {
+    else if(preWords[0].word_type=="IDENFR" || preWords[1].word=="[") {
         //连接LVal
+        //TODO：第二个判断条件是为了避免类似于 a[1[0]这种错误调用的
         ParserTree::catchTree(root,LVal());
     }
     //接下来考虑Number

@@ -13,6 +13,7 @@ public:
     //输出至正确的文本
     void printParser();
     static Parser* getParserInstance();
+    TreeNode* getPaserTree();
 private:
     TreeNode *ParserRoot = nullptr;
     static Parser *instance;

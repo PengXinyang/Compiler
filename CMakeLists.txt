@@ -20,4 +20,8 @@ add_executable(Compiler main.cpp
         ErrorHandle/include/ErrorPrint.h
         Parser/src/ParserTree.cpp
         Parser/include/ParserTree.h
+        Symbol/src/Symbol.cpp
+        Symbol/include/Symbol.h
+        Symbol/src/SymbolHandle.cpp
+        Symbol/include/SymbolHandle.h
 )
