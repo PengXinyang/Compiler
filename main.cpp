@@ -23,7 +23,6 @@ int main() {
     symbol_handle->handleSymbol();
     ErrorPrint::printfError();
     if(!ErrorPrint::isError) {
-        //parser->printParser();
         symbol_handle->printSymbol();
     }
     //删除类

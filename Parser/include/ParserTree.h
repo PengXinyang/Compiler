@@ -19,7 +19,20 @@ struct TreeNode {
     TreeNode() = default;
     explicit TreeNode(Word word){this->word=std::move(word);}
 };
-
+class treeNode {
+public:
+    Word word;
+    int son_num = 0;
+    vector<treeNode*> sonNode;
+    treeNode* father{};
+    treeNode() = default;
+    virtual ~treeNode() = default;
+    explicit treeNode(Word word){this->word=std::move(word);}
+    //语法分析
+    virtual treeNode* parser();
+    //语义分析
+    virtual void symbol();
+};
 class ParserTree {
 public:
     //连接语法树

@@ -56,6 +56,10 @@ private:
     TreeNode* ConstExp();//常量表达式
 };
 
-
+class CompUnitNode final : public treeNode{
+public:
+    treeNode* parser() override;
+    void symbol() override;
+};
 
 #endif //PARSER_H
