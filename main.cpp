@@ -2,6 +2,7 @@
 #include "./Lexer/include/Lexer.h"
 #include<iostream>
 
+#include "GenerateIR.h"
 #include "ErrorHandle/include/ErrorPrint.h"
 #include "Lexer/include/TokenType.h"
 #include "Parser/include/Parser.h"
@@ -22,8 +23,11 @@ int main() {
     SymbolHandle* symbol_handle = SymbolHandle::getSymbolHandleInstance();
     symbol_handle->handleSymbol();
     ErrorPrint::printfError();
+    GenerateIR* generate_ir = GenerateIR::getInstance();
+    generate_ir->generateLLVMIR();
     if(!ErrorPrint::isError) {
         symbol_handle->printSymbol();
+        generate_ir->printLLVMIR();
     }
     //删除类
     Lexer::deleteLexerInstance();

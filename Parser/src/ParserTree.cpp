@@ -9,6 +9,18 @@ TreeNode *ParserTree::catchTree(TreeNode* root, const Word &word) {
     son->father = root;
     root->sonNode.push_back(son);
     root->son_num++;
+    if(root->type=="char" && son->type=="int") {
+        //语法树上涉及强制类型转换
+        root->type = "int";
+        return root;
+    }
+    if(!root->type.empty()) {
+        //根节点本身有类型，并且已经不会强制类型转换了，直接跳出
+        return root;
+    }
+    if(!son->type.empty()){
+        root->type = son->type;
+    }
     return root;
 }
 
@@ -21,6 +33,18 @@ TreeNode *ParserTree::catchTree(TreeNode *root, TreeNode *son) {
     son->father = root;
     root->sonNode.push_back(son);
     root->son_num++;
+    if(root->type=="char" && son->type=="int") {
+        //语法树上涉及强制类型转换
+        root->type = "int";
+        return root;
+    }
+    if(!root->type.empty()) {
+        //根节点本身有类型，并且已经不会强制类型转换了，直接跳出
+        return root;
+    }
+    if(!son->type.empty()){
+        root->type = son->type;
+    }
     return root;
 }
 void ParserTree::printTree(FILE* fp, const TreeNode *root) {

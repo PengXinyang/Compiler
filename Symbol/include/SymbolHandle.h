@@ -17,12 +17,11 @@ public:
     static SymbolHandle* getSymbolHandleInstance();
     void handleSymbol();
     void printSymbol();//输出全部的符号表
+    shared_ptr<SymbolTable> getSymbolTable();//获取全局符号表
 private:
     static SymbolHandle* instance;
     TreeNode*paserTree = nullptr;//语法树根节点
     int symbol_table_id = 0;//全局符号表序号，每创建一个符号表就+1
-    /*stack<SymbolTable> symbol_table_stack;//符号表栈，采用栈进行构造
-    map<int, SymbolTable> symbol_table_map;//构造好符号表，弹出栈后加入这个map，用于保存。*/
     shared_ptr<SymbolTable> GlobalSymbolTable = nullptr;
     shared_ptr<SymbolTable> nowSymbolTable = nullptr;
     bool is_main = false;//当前是否在main函数，用于处理main函数没有返回值的问题

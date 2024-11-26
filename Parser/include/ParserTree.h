@@ -14,10 +14,16 @@ using namespace std;
 struct TreeNode {
     Word word;
     int son_num = 0;//统计有几个孩子
+    string type;//节点的类型，默认为空，只有当涉及到值的时候才有int,char类型
     vector<TreeNode*> sonNode;
     TreeNode* father{};//父节点
     TreeNode() = default;
-    explicit TreeNode(Word word){this->word=std::move(word);}
+    explicit TreeNode(Word word) {
+        this->word=std::move(word);
+        if(word.word_type=="INTTK"||word.word_type=="INTCON") type = "int";
+        else if(word.word_type=="CHARTK"||word.word_type=="CHRCON") type = "char";
+    }
+
 };
 class treeNode {
 public:

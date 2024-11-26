@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.28.3)
 project(Compiler)
 
 set(CMAKE_CXX_STANDARD 17)
-
+include_directories(./LLVM/include)
 add_executable(Compiler main.cpp
         Lexer/src/Lexer.cpp
         Lexer/include/Lexer.h
@@ -24,4 +24,91 @@ add_executable(Compiler main.cpp
         Symbol/include/Symbol.h
         Symbol/src/SymbolHandle.cpp
         Symbol/include/SymbolHandle.h
+        LLVM/src/value/Value.cpp
+        LLVM/include/value/Value.h
+        LLVM/src/type/IRType.cpp
+        LLVM/include/type/IRType.h
+        LLVM/src/type/irType/IRVoid.cpp
+        LLVM/include/type/irType/IRVoid.h
+        LLVM/src/type/irType/IRChar.cpp
+        LLVM/include/type/irType/IRChar.h
+        LLVM/src/type/irType/IRInt.cpp
+        LLVM/include/type/irType/IRInt.h
+        LLVM/src/type/irType/IRArray.cpp
+        LLVM/include/type/irType/IRArray.h
+        LLVM/src/type/irType/IRPointer.cpp
+        LLVM/include/type/irType/IRPointer.h
+        LLVM/src/type/irType/IRBlock.cpp
+        LLVM/include/type/irType/IRBlock.h
+        LLVM/src/type/IRPreName.cpp
+        LLVM/include/type/IRPreName.h
+        LLVM/src/value/user/User.cpp
+        LLVM/include/value/user/User.h
+        LLVM/src/value/user/Use.cpp
+        LLVM/include/value/user/Use.h
+        LLVM/src/value/architecture/user/GlobalVariable.cpp
+        LLVM/include/value/architecture/user/GlobalVariable.h
+        LLVM/src/value/architecture/data_structure/InitVar.cpp
+        LLVM/include/value/architecture/data_structure/InitVar.h
+        LLVM/src/value/architecture/user/Function.cpp
+        LLVM/include/value/architecture/user/Function.h
+        LLVM/src/value/architecture/BasicBlock.cpp
+        LLVM/include/value/architecture/BasicBlock.h
+        LLVM/src/value/architecture/user/Instruction.cpp
+        LLVM/include/value/architecture/user/Instruction.h
+        LLVM/include/instanceof.h
+        LLVM/src/value/architecture/data_structure/Loop.cpp
+        LLVM/include/value/architecture/data_structure/Loop.h
+        LLVM/src/value/architecture/Param.cpp
+        LLVM/include/value/architecture/Param.h
+        LLVM/src/value/architecture/ConstValue.cpp
+        LLVM/include/value/architecture/ConstValue.h
+        LLVM/src/value/architecture/ConstString.cpp
+        LLVM/include/value/architecture/ConstString.h
+        LLVM/src/value/architecture/Module.cpp
+        LLVM/include/value/architecture/Module.h
+        LLVM/src/value/architecture/user/GlobalValue.cpp
+        LLVM/include/value/architecture/user/GlobalValue.h
+        LLVM/src/value/architecture/user/instruction/IOInstruction/IOInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/IOInstruction/IOInstruction.h
+        LLVM/src/value/architecture/user/instruction/IOInstruction/IOGetInt.cpp
+        LLVM/include/value/architecture/user/instruction/IOInstruction/IOGetInt.h
+        LLVM/src/value/architecture/user/instruction/IOInstruction/IOGetChar.cpp
+        LLVM/include/value/architecture/user/instruction/IOInstruction/IOGetChar.h
+        LLVM/src/value/architecture/user/instruction/IOInstruction/IOPutInt.cpp
+        LLVM/include/value/architecture/user/instruction/IOInstruction/IOPutInt.h
+        LLVM/src/value/architecture/user/instruction/IOInstruction/IOPutCh.cpp
+        LLVM/include/value/architecture/user/instruction/IOInstruction/IOPutCh.h
+        LLVM/src/value/architecture/user/instruction/IOInstruction/IOPutStr.cpp
+        LLVM/include/value/architecture/user/instruction/IOInstruction/IOPutStr.h
+        LLVM/src/value/architecture/user/instruction/AllocaInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/AllocaInstruction.h
+        LLVM/src/value/architecture/user/instruction/LoadInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/LoadInstruction.h
+        LLVM/src/value/architecture/user/instruction/StoreInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/StoreInstruction.h
+        LLVM/src/value/architecture/user/instruction/ReturnInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/ReturnInstruction.h
+        LLVM/src/value/architecture/user/instruction/CalculateInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/CalculateInstruction.h
+        LLVM/src/value/architecture/user/instruction/CallInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/CallInstruction.h
+        LLVM/src/value/architecture/user/instruction/GetelementptrInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/GetelementptrInstruction.h
+        LLVM/src/value/architecture/user/instruction/ZextInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/ZextInstruction.h
+        LLVM/src/value/architecture/user/instruction/TruncInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/TruncInstruction.h
+        LLVM/src/LLVMSymbol/SymbolValue.cpp
+        LLVM/include/LLVMSymbol/SymbolValue.h
+        LLVM/src/type/IRName.cpp
+        LLVM/include/type/IRName.h
+        LLVM/src/generate/LLVMGenerate.cpp
+        LLVM/include/generate/LLVMGenerate.h
+        LLVM/src/generate/LLVMExp.cpp
+        LLVM/include/generate/LLVMExp.h
+        LLVM/src/GenerateIR.cpp
+        LLVM/include/GenerateIR.h
+        LLVM/src/LLVMSymbol/SymbolCalculate.cpp
+        LLVM/include/LLVMSymbol/SymbolCalculate.h
 )

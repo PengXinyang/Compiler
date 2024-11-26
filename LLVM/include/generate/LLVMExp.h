@@ -22,7 +22,7 @@ private:
      * 提取了IntValue和ConstValue的公共部分
      * 形成了VarSymbol的一类处理方法，包括load和get指令
      */
-    Value* generateVarValueIR(const vector<Value*>& values, const Symbol* symbol);
+    Value* generateVarValueIR(const vector<Value*>& values, Symbol* symbol);
 public:
     LLVMExp() = default;
     explicit LLVMExp(LLVMGenerate* llvmGenerate);

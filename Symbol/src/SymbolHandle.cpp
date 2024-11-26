@@ -22,7 +22,7 @@ SymbolHandle *SymbolHandle::getSymbolHandleInstance() {
 
 void SymbolHandle::handleSymbol() {
     if(paserTree==nullptr) {
-        return;
+        paserTree = Parser::getParserInstance()->getPaserTree();
     }
     SymbolCompUnit(paserTree);
 }
@@ -35,6 +35,11 @@ void SymbolHandle::printSymbol() {
     fclose(fp);
 }
 
+shared_ptr<SymbolTable> SymbolHandle::getSymbolTable() {
+    return GlobalSymbolTable;
+}
+
+
 shared_ptr<SymbolTable> SymbolHandle::createSymbolTable() {
     shared_ptr<SymbolTable> symbol_table = nullptr;
     if(GlobalSymbolTable!=nullptr) {
@@ -42,6 +47,8 @@ shared_ptr<SymbolTable> SymbolHandle::createSymbolTable() {
         symbol_table = make_shared<SymbolTable>(*new SymbolTable(++symbol_table_id, father_table));
         father_table->children_ptr.push_back(symbol_table);
         nowSymbolTable = symbol_table;
+        //如果当前在函数内，给这个符号表标记一个函数名
+        nowSymbolTable->func_token = func_token;
     }else {
         //如果主符号表是空的，说明此时还没有创建全局符号表，否则直到退出时符号表栈才消失
         symbol_table = make_shared<SymbolTable>(*new SymbolTable());
@@ -141,10 +148,8 @@ void SymbolHandle::SymbolConstInitVal(TreeNode *root, const string &token) {
     vector<TreeNode*> son_nodes = root->sonNode;
     if(son_nodes[0]->word.word_type=="STRCON") {
         //说明是StringConst，自然就是字符数组
-        vector<char> str_con;
         string strCon = son_nodes[0]->word.word;
-        str_con.assign(strCon.begin(),strCon.end());
-        nowSymbolTable->set_char_array_value(token,str_con);
+        nowSymbolTable->set_char_array_value(token,strCon);
     }else if(son_nodes[0]->word.word=="{") {
         //说明是第二种形式，'{' [ ConstExp { ',' ConstExp } ] '}'
         for(int i=1;i<root->son_num-1;i+=2) {
@@ -221,10 +226,8 @@ void SymbolHandle::SymbolInitVal(TreeNode *root, const string &token) {
     vector<TreeNode*> son_nodes = root->sonNode;
     if(son_nodes[0]->word.word_type=="STRCON") {
         //说明是StringConst，自然就是字符数组
-        vector<char> str_init;
         string strInit = son_nodes[0]->word.word;
-        str_init.assign(strInit.begin(),strInit.end());
-        nowSymbolTable->set_char_array_value(token,str_init);
+        nowSymbolTable->set_char_array_value(token,strInit);
     }else if(son_nodes[0]->word.word=="{") {
         //说明是第二种形式，'{' [ Exp { ',' Exp } ] '}'
         for(int i=1;i<root->son_num-1;i+=2) {
@@ -292,6 +295,8 @@ void SymbolHandle::SymbolFuncDef(TreeNode *root) {
         ErrorPrint::printError(ErrorCategory::return_lack,
             Block->sonNode[Block->son_num-1]->word.line_num);
     }
+    //出去函数了，需要将当前的SymbolHandle的函数名置为空
+    func_token = "";
 }
 
 void SymbolHandle::SymbolMainFuncDef(TreeNode *root) {
@@ -326,6 +331,7 @@ void SymbolHandle::SymbolMainFuncDef(TreeNode *root) {
             Block->sonNode[Block->son_num-1]->word.line_num);
     }
     is_main=false;//退出main函数
+    func_token="";//函数名置为空
 }
 
 int SymbolHandle::SymbolFuncType(TreeNode *root) {
@@ -368,10 +374,11 @@ int SymbolHandle::SymbolFuncFParam(TreeNode *root) {
         nowSymbolTable->add_func_param_symbol(Ident,btype,is_array);
     }
     if(!is_array) {
-        return 0;
+        //不是数组，但是在代码生成涉及到强制类型转换的问题，所以还需要记录是什么类型
+        return btype;
     }
     //btype 0是int 1是char
-    return btype == 0?1:2;
+    return btype == 0?2:3;
 }
 
 void SymbolHandle::SymbolBlock(TreeNode *root, bool is_func) {
@@ -432,26 +439,22 @@ void SymbolHandle::SymbolStmt(TreeNode *root) {
                 if(symbol->is_array) {
                     //给数组赋值
                     if(symbol->btype==0) {
-                        int size = static_cast<int> (symbol->array_int_values.size());
+                        int size = static_cast<int> (symbol->array_values.size());
                         if(array_num>=size) {
-                            symbol->array_int_values.push_back(exp);
+                            symbol->array_values.push_back(exp);
                         }
-                        else symbol->array_int_values[array_num] = exp;
+                        else symbol->array_values[array_num] = exp;
                     }else if(symbol->btype==1) {
-                        int size = static_cast<int> (symbol->array_char_values.size());
+                        int size = static_cast<int> (symbol->array_values.size());
                         if(array_num>=size) {
-                            symbol->array_char_values.push_back(static_cast<char>(exp));
+                            symbol->array_values.push_back(exp);
                         }
-                        else symbol->array_char_values[array_num] = static_cast<char>(exp);
+                        else symbol->array_values[array_num] = exp;
                     }
                 }
                 else if(symbol->is_var) {
                     //如果只是变量，那就直接赋值
-                    if(symbol->btype==0) {
-                        symbol->int_var_value = exp;
-                    }else if(symbol->btype==1) {
-                        symbol->char_var_value = static_cast<char>(exp);
-                    }
+                    symbol->var_value = exp;
                 }
             }
         }
@@ -633,26 +636,22 @@ void SymbolHandle::SymbolForStmt(TreeNode *root) {
             if(symbol->is_array) {
                 //给数组赋值
                 if(symbol->btype==0) {
-                    int size = static_cast<int> (symbol->array_int_values.size());
+                    int size = static_cast<int> (symbol->array_values.size());
                     if(array_num>=size) {
-                        symbol->array_int_values.push_back(exp);
+                        symbol->array_values.push_back(exp);
                     }
-                    else symbol->array_int_values[array_num] = exp;
+                    else symbol->array_values[array_num] = exp;
                 }else if(symbol->btype==1) {
-                    int size = static_cast<int> (symbol->array_char_values.size());
+                    int size = static_cast<int> (symbol->array_values.size());
                     if(array_num>=size) {
-                        symbol->array_char_values.push_back(static_cast<char>(exp));
+                        symbol->array_values.push_back(exp);
                     }
-                    else symbol->array_char_values[array_num] = static_cast<char>(exp);
+                    else symbol->array_values[array_num] = exp;
                 }
             }
             else if(symbol->is_var) {
                 //如果只是变量，那就直接赋值
-                if(symbol->btype==0) {
-                    symbol->int_var_value = exp;
-                }else if(symbol->btype==1) {
-                    symbol->char_var_value = static_cast<char>(exp);
-                }
+                symbol->var_value = exp;
             }
         }
     }
@@ -708,22 +707,17 @@ pair<int,int> SymbolHandle::SymbolLVal(TreeNode *root, int* type) {
             if(symbol->btype==0) {
                 //说明是int数组
                 //注意，在函数中，由于数组的定义可以是形参，元素个数默认为0
-                if(symbol->array_int_values.empty()) {return {-1,exp};}
-                return {symbol->array_int_values[exp],exp};
+                if(symbol->array_values.empty()) {return {-1,exp};}
+                return {symbol->array_values[exp],exp};
             }
             if(symbol->btype==1) {
-                if(symbol->array_char_values.empty()) {return {-1,exp};}
-                return {symbol->array_char_values[exp],exp};
+                if(symbol->array_values.empty()) {return {-1,exp};}
+                return {symbol->array_values[exp],exp};
             }
         }
         else if(symbol->is_var) {
             //说明是变量
-            if(symbol->btype==0) {
-                return {symbol->int_var_value,exp};
-            }
-            if(symbol->btype==1) {
-                return {symbol->char_var_value,exp};
-            }
+            return {symbol->var_value,exp};
         }
     }
     printf("Error in SymbolHandle::SymbolLVal\n");
@@ -759,11 +753,12 @@ int SymbolHandle::SymbolPrimaryExp(TreeNode *root, const string& token) {
 }
 
 int SymbolHandle::SymbolNumber(TreeNode *root) {
-    return stoi(root->sonNode[0]->word.word);
+    if(root->word.word=="<Number>") {return stoi(root->sonNode[0]->word.word);}
+    return root->sonNode[0]->word.word[1];
 }
 
 char SymbolHandle::SymbolCharacter(TreeNode *root) {
-    return root->sonNode[0]->word.word[0];
+    return root->sonNode[0]->word.word[1];
 }
 
 int SymbolHandle::SymbolUnaryExp(TreeNode *root, const string &token) {
@@ -800,7 +795,7 @@ int SymbolHandle::SymbolUnaryExp(TreeNode *root, const string &token) {
             //在之前的符号分析中，函数是形参，没有值（默认为0），所以运算的结果肯定有问题
             Symbol* func_symbol = nowSymbolTable->get_symbol_in_all_table(func_token);
             int param_num = func_symbol->param_num;
-            const auto& param_type = func_symbol->param_type;
+            auto param_type = func_symbol->param_type;
             for(int j=2;j<root->son_num;++j) {
                 if(son_nodes[j]->word.word=="<FuncRParams>") {
                     //每次分析FuncRParams，返回它的类型(数组还是变量)
@@ -811,9 +806,17 @@ int SymbolHandle::SymbolUnaryExp(TreeNode *root, const string &token) {
                         ErrorPrint::printError(ErrorCategory::param_num_not_match,
                             Ident.line_num);
                     }else if(r_param_type!=param_type) {
+                        //对于相同位置，如果分别是0，1，那么属于强制类型转换，不报错
+                        //为了方便判断，将0和1全部置为0
                         //如果内容不对，即参数类型不匹配
-                        ErrorPrint::printError(ErrorCategory::param_type_not_match,
-                            Ident.line_num);
+                        for(int k = 0;k<param_num;++k) {
+                            if(r_param_type[k] == 1) r_param_type[k] = 0;
+                            if(param_type[k] == 1) param_type[k] = 0;
+                        }
+                        if(r_param_type!=param_type) {
+                            ErrorPrint::printError(ErrorCategory::param_type_not_match,
+                                Ident.line_num);
+                        }
                     }else {
                         //TODO:没有问题，应当正常返回函数值，以后再处理
                         return func_symbol->func_value;
@@ -845,7 +848,7 @@ vector<int> SymbolHandle::SymbolFuncRParams(TreeNode *root, const string &func_t
         int left_bracket = 0;//标记有没有左括号
         string token;
         Symbol* symbol = nullptr;
-        int is_con_var = 0;
+        int is_con_var = -1;
         for(const auto& leaf_node:leaf_nodes) {
             if(leaf_node->word.word=="[" || leaf_node->word.word_type=="STRCON") {
                 //一定是数据，传的是数组元素，普通的变量
@@ -860,8 +863,11 @@ vector<int> SymbolHandle::SymbolFuncRParams(TreeNode *root, const string &func_t
                     symbol = nowSymbolTable->get_symbol_in_all_table(token);
                 }
             }
-            else if(leaf_node->word.word_type=="INTCON" || leaf_node->word.word_type=="CHRCON") {
-                //说明这是变量，不是数组
+            else if(leaf_node->word.word_type=="INTCON" ) {
+                //说明这是int变量，不是数组
+                is_con_var = 0;
+            }else if(leaf_node->word.word_type=="CHRCON") {
+                //说明这是char变量，不是数组
                 is_con_var = 1;
             }
         }
@@ -871,19 +877,19 @@ vector<int> SymbolHandle::SymbolFuncRParams(TreeNode *root, const string &func_t
         }else {
             //否则，根据symbol的情况采取措施
             //TODO:注意，这里少考虑一种情况，如果实参有符号Exp未定义，那么添加的vector肯定会变少，很可能在一行出现两个错误
-            if(is_con_var) {
+            if(is_con_var==0 || is_con_var==1) {
                 //这个符号是参数var，不是数组
-                r_params.push_back(0);
+                r_params.push_back(is_con_var);
             }
             else if(symbol != nullptr) {
                 int btype = symbol->btype;
                 int type = symbol->type;
                 if(type == 0 || symbol->is_var) {
                     //这个符号是参数var，不是数组
-                    r_params.push_back(0);
+                    r_params.push_back(symbol->btype);
                 }else if(type == 1) {
-                    //1是int数组,2是char数组
-                    r_params.push_back(type + btype);
+                    //2是int数组,3是char数组
+                    r_params.push_back(type + btype + 1);
                 }else if(type == 2) {
                     //2是函数，函数返回的是int，char,void
                     if(symbol->func_type == 0) {
@@ -891,7 +897,7 @@ vector<int> SymbolHandle::SymbolFuncRParams(TreeNode *root, const string &func_t
                         r_params.push_back(0);
                     }else if(symbol->func_type == 1) {
                         //是char的变量
-                        r_params.push_back(0);
+                        r_params.push_back(1);
                     }else {
                         //确实调用了，但是void类型函数，和参数类型不匹配
                         r_params.push_back(-1);
