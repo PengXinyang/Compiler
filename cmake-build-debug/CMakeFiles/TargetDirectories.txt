@@ -1,3 +1,0 @@
-D:/ziliao/Compile Lab/cmake-build-debug/CMakeFiles/Compiler.dir
-D:/ziliao/Compile Lab/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/ziliao/Compile Lab/cmake-build-debug/CMakeFiles/rebuild_cache.dir
