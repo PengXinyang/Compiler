@@ -26,14 +26,12 @@ public:
     int calculate(TreeNode* root);
     /**
     * 用于存储分析得出的ValDef的初始化值。由于需要处理变量和数组，所以返回一个数组
-    * dim: 维数，是0维变量还是一维数组
     */
-    vector<int> calculateInitVal(int dim, TreeNode* root);
+    vector<int> calculateInitVal(TreeNode *root);
     /**
     * 用于存储分析得出的ConstDef的初始化值。由于需要处理变量和数组，所以返回一个数组
-    * dim: 维数，是0维变量还是一维数组
     */
-    vector<int> calculateConstInitVal(int dim, TreeNode* root);
+    vector<int> calculateConstInitVal(TreeNode *root);
 private:
     int calculateAddExp(TreeNode* root);
     int calculateMulExp(TreeNode* root);

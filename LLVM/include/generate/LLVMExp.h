@@ -7,6 +7,7 @@
 #include "../../../Parser/include/ParserTree.h"
 #include "../../../Symbol/include/Symbol.h"
 #include "value/Value.h"
+#include "value/architecture/BasicBlock.h"
 
 
 /**
@@ -27,7 +28,7 @@ public:
     LLVMExp() = default;
     explicit LLVMExp(LLVMGenerate* llvmGenerate);
 
-    /*
+    /**
      * 左值表达式 LVal → Ident ['[' Exp ']']
      * 获取左值对应的右侧LLVM IR代码，获得左值的地址
      */
@@ -45,8 +46,22 @@ public:
     * Stmt -> LVal '=' 'getchar' '(' ')'';'
     */
     Value* generateGetCharIR(const TreeNode* AstRoot);
-
-    //TODO: 其它的Exp之后再填
+    /**
+    * Cond -> LOrExp
+    */
+    void generateCondIR(TreeNode* AstRoot,BasicBlock* thenBlock, BasicBlock* elseBlock);
+    /**
+    * LorExp -> LAndExp | LOrExp '||' LAndExp
+    */
+    void generateLOrExpIR(TreeNode* AstRoot,BasicBlock* thenBlock, BasicBlock* elseBlock);
+    /**
+    * LAndExp -> EqExp | LAndExp '&&' EqExp
+    */
+    void generateLAndExpIR(TreeNode* AstRoot,BasicBlock* thenBlock, BasicBlock* elseBlock);
+    /**
+    * EqExp -> RelExp | EqExp ('=='|'!=') RelExp
+    */
+    void generateEqExpIR(TreeNode* AstRoot,BasicBlock* thenBlock, BasicBlock* elseBlock);
 };
 
 

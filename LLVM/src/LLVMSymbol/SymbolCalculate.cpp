@@ -40,7 +40,7 @@ int SymbolCalculate::calculate(TreeNode *root) {
     return 1;
 }
 
-vector<int> SymbolCalculate::calculateInitVal(const int dim, TreeNode *root) {
+vector<int> SymbolCalculate::calculateInitVal(TreeNode *root) {
     vector<int> initVal;
     if(root->word.word=="<InitVal>") {
         for(auto* sonNode : root->sonNode) {
@@ -52,7 +52,7 @@ vector<int> SymbolCalculate::calculateInitVal(const int dim, TreeNode *root) {
     return initVal;
 }
 
-vector<int> SymbolCalculate::calculateConstInitVal(const int dim, TreeNode *root) {
+vector<int> SymbolCalculate::calculateConstInitVal(TreeNode *root) {
     vector<int> initVal;
     if(root->word.word=="<ConstInitVal>") {
         for(auto* sonNode : root->sonNode) {

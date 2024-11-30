@@ -18,8 +18,8 @@ class SymbolValue {
 public:
     static SymbolValue* getInstance();
     //Symbol* ConnectSymbolValue(TreeNode* root);
-    vector<Value*> genConstValuesIR(TreeNode* root, int dim);
-    vector<Value*> genValuesIR(TreeNode* root, int dim);
+    vector<Value*> genConstValuesIR(TreeNode *root);
+    vector<Value*> genValuesIR(TreeNode *root);
 private:
     static SymbolValue* instance;
     LLVMGenerate* generate;

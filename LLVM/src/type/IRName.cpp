@@ -13,6 +13,7 @@ int IRName::countStringId = 0;
 Module* IRName::now_module = nullptr;
 Function* IRName::now_function = nullptr;
 BasicBlock* IRName::now_block = nullptr;
+stack<Loop*> IRName::loopStack;
 
 void IRName::setNowBlock(BasicBlock *block) {
     now_block = block;
@@ -28,6 +29,10 @@ void IRName::setNowFunction(Function *function) {
 
 Function *IRName::getNowFunction() {
     return now_function;
+}
+
+Loop *IRName::getNowLoop() {
+    return loopStack.top();
 }
 
 void IRName::setNowModule(Module *module) {
@@ -95,4 +100,12 @@ void IRName::addInstruction(Instruction *instruction) {
 
 void IRName::addConstString(ConstString *const_string) {
     now_module->addConstantString(const_string);
+}
+
+void IRName::pushLoop(Loop *loop) {
+    loopStack.push(loop);
+}
+
+void IRName::popLoop() {
+    loopStack.pop();
 }

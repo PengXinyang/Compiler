@@ -40,8 +40,10 @@ private:
     Value* ConstDefIR(TreeNode* AstRoot);
     Value* VarDefIR(TreeNode* AstRoot);
     Value* BlockIR(TreeNode* AstRoot);
-    //TODO:在这里补充if，for系列指令
-
+    Value* IfIR(TreeNode* AstRoot);
+    Value* ForIR(TreeNode* AstRoot);
+    Value* ContinueIR(TreeNode* AstRoot);
+    Value* BreakIR(TreeNode* AstRoot);
     /**
     * Stmt -> 'return' [Exp] ';'
     */
@@ -53,8 +55,8 @@ private:
     Value* UnaryExpIR(TreeNode* AstRoot);
     Value* MulExpIR(TreeNode* AstRoot);
     Value* AddExpIR(TreeNode* AstRoot);
-    //TODO:在这里补充条件语句的Exp
-
+    Value* RelExpIR(TreeNode* AstRoot);
+    Value* EqExpIR(TreeNode* AstRoot);
     //函数式
     Value* FuncDefIR(TreeNode* AstRoot);//函数定义
     Value* FuncFParamIR(TreeNode* AstRoot);//函数形参
@@ -66,7 +68,7 @@ private:
     void enterNewSymbolTable();
     //退出符号表
     void quitNowSymbolTable();
-    //强制类型转换，统一1和2的Value类型
+    //强制类型转换，统一1和2的Value类型，只用在了AddExp和MulExp
     void changeType(Value** value1,Value** value2);
 };
 

@@ -13,6 +13,7 @@ public:
     virtual bool isVoid();
     virtual bool isChar();
     virtual bool isInt();
+    virtual bool isBool();
     virtual bool isArray();
     virtual bool isPointer();//判断是不是指针类型
     virtual bool isBlock();//判断是不是块类型

@@ -7,7 +7,7 @@
 string IRPreName::toLLVM(const IRPreType preType) {
     static const unordered_map<IRPreType, string> preTypeMap = {
         {IRPreType::GLOBAL_VAR, "@"},
-        {IRPreType::LOCAL_VAR, "%"},
+        {IRPreType::LOCAL_VAR, "%var_"},
         {IRPreType::BLOCK, "label_"},
         {IRPreType::FUNCTION, "@"},
         {IRPreType::CONST_STRING, "@.str."},

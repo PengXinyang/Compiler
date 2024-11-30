@@ -111,4 +111,14 @@ add_executable(Compiler main.cpp
         LLVM/include/GenerateIR.h
         LLVM/src/LLVMSymbol/SymbolCalculate.cpp
         LLVM/include/LLVMSymbol/SymbolCalculate.h
+        LLVM/src/type/irType/IRBool.cpp
+        LLVM/include/type/irType/IRBool.h
+        LLVM/src/value/architecture/user/instruction/BrInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/BrInstruction.h
+        LLVM/src/optimize/OptimizerInit.cpp
+        LLVM/include/optimize/OptimizerInit.h
+        LLVM/src/value/architecture/user/instruction/IcmpInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/IcmpInstruction.h
+        LLVM/src/value/architecture/user/instruction/JumpInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/JumpInstruction.h
 )

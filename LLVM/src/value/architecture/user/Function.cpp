@@ -6,6 +6,7 @@
 
 #include <sstream>
 
+#include "optimize/OptimizerInit.h"
 #include "type/IRName.h"
 #include "type/irType/IRBlock.h"
 
@@ -13,7 +14,9 @@ Function::Function(const string& name, IRType* returnType):GlobalValue(new IRBlo
     this->returnType = returnType;
     basicBlocks = vector<BasicBlock*>();
     params = vector<Param*>();
-    IRName::addFunction(this);
+    if(!OptimizerInit::isOptimize()) {
+        IRName::addFunction(this);
+    }
 }
 
 void Function::addParam(Param *param) {

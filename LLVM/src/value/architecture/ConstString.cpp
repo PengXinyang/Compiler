@@ -6,6 +6,7 @@
 
 #include <regex>
 
+#include "optimize/OptimizerInit.h"
 #include "type/IRName.h"
 #include "type/irType/IRArray.h"
 #include "type/irType/IRChar.h"
@@ -16,7 +17,9 @@ ConstString::ConstString(const string& name, const string& str, const vector<int
             new IRArray(new IRChar(),dims)
         ),name){
     this->str = str;
-    IRName::addConstString(this);
+    if(!OptimizerInit::isOptimize()) {
+        IRName::addConstString(this);
+    }
 }
 
 IRPointer *ConstString::getIRPointer() const {

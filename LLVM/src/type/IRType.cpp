@@ -18,6 +18,9 @@ bool IRType::isChar() {
 bool IRType::isInt() {
     return false;
 }
+bool IRType::isBool() {
+    return false;
+}
 bool IRType::isPointer() {
     return false;
 }

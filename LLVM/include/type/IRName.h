@@ -4,6 +4,7 @@
 
 #ifndef IRNAME_H
 #define IRNAME_H
+#include <stack>
 #include <unordered_map>
 
 #include "value/architecture/Module.h"
@@ -34,6 +35,8 @@ private:
     static BasicBlock *now_block;
     //记录当前所在的函数
     static Function *now_function;
+    //采用一个Stack来存储，每次进入循环时push，退出循环时pop
+    static stack<Loop*> loopStack;
 
 public:
     //获取基本块的名字
@@ -48,6 +51,8 @@ public:
     static string getConstStringName();
     //获取形参名
     static string getParamName(Function *function = now_function);
+    //获取当前所在的循环
+    static Loop* getNowLoop();
     static void setNowModule(Module *module);
     static void setNowBlock(BasicBlock *block);
     static void setNowFunction(Function *function);
@@ -59,6 +64,10 @@ public:
     static void addParam(Param* param);
     static void addInstruction(Instruction* instruction);
     static void addConstString(ConstString* const_string);
+    //压循环栈
+    static void pushLoop(Loop* loop);
+    //弹循环栈
+    static void popLoop();
 };
 
 

@@ -33,7 +33,7 @@ SymbolValue *SymbolValue::getInstance() {
     return nullptr;
 }*/
 
-vector<Value *> SymbolValue::genConstValuesIR(TreeNode *root, int dim) {
+vector<Value *> SymbolValue::genConstValuesIR(TreeNode *root) {
     vector<Value *> result;
     if(root->word.word == "<ConstInitVal>") {
         for(const auto son:root->sonNode) {
@@ -45,7 +45,7 @@ vector<Value *> SymbolValue::genConstValuesIR(TreeNode *root, int dim) {
     }
     return result;
 }
-vector<Value *> SymbolValue::genValuesIR(TreeNode *root, int dim) {
+vector<Value *> SymbolValue::genValuesIR(TreeNode *root) {
     vector<Value *> result;
     if(root->word.word == "<InitVal>") {
         for(const auto son:root->sonNode) {

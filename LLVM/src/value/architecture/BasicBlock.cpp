@@ -6,6 +6,7 @@
 
 #include <sstream>
 
+#include "optimize/OptimizerInit.h"
 #include "type/IRName.h"
 #include "type/irType/IRBlock.h"
 #include "value/architecture/user/Instruction.h"
@@ -13,7 +14,9 @@
 BasicBlock::BasicBlock(const string& name) :Value(new IRBlock("BasicBlock"),name){
     instructions = vector<Instruction*>();
     is_exist = true;
-    IRName::addBasicBlock(this);
+    if(!OptimizerInit::isOptimize()) {
+        IRName::addBasicBlock(this);
+    }
 }
 void BasicBlock::setExist(bool exist) {
     is_exist = exist;
