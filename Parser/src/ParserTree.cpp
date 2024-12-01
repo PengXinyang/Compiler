@@ -79,10 +79,13 @@ TreeNode* ParserTree::adjustTree(TreeNode *root, const Word &word) {
         if(i!=0) {
             auto* sonWord = new TreeNode(word);
             p->sonNode.push_back(sonWord);
+            sonWord->father = p;
             p->sonNode.push_back(root->sonNode[i-1]);
+            root->sonNode[i-1]->father = p;
             p->son_num+=2;
         }
         p->sonNode.push_back(root->sonNode[i]);
+        root->sonNode[i]->father = p;
         p->son_num++;
         p=p->sonNode[0];
     }

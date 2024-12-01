@@ -6,17 +6,17 @@
 
 #include "type/irType/IRVoid.h"
 
-BrInstruction::BrInstruction(Value *condition, BasicBlock *thenBlock, BasicBlock *elseBlock)
+BrInstruction::BrInstruction(Value *condition, BasicBlock *ifTrueBlock, BasicBlock *ifFalseBlock)
     :Instruction(new IRVoid(),"BrInstruction","br"){
     this->condition = condition;
-    this->thenBlock = thenBlock;
-    this->elseBlock = elseBlock;
+    this->ifTrueBlock = ifTrueBlock;
+    this->ifFalseBlock = ifFalseBlock;
     addOpValue(condition);
-    addOpValue(thenBlock);
-    addOpValue(elseBlock);
+    addOpValue(ifTrueBlock);
+    addOpValue(ifFalseBlock);
 }
 
 string BrInstruction::toLLVM() {
     return instructionType + " i1 " + condition->value_name + ", label %" +
-                thenBlock->value_name + ", label %" + elseBlock->value_name;
+                ifTrueBlock->value_name + ", label %" + ifFalseBlock->value_name;
 }

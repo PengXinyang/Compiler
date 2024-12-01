@@ -9,6 +9,7 @@
 #include "optimize/OptimizerInit.h"
 #include "type/IRName.h"
 #include "type/irType/IRBlock.h"
+#include "value/architecture/data_structure/Loop.h"
 #include "value/architecture/user/Instruction.h"
 
 BasicBlock::BasicBlock(const string& name) :Value(new IRBlock("BasicBlock"),name){

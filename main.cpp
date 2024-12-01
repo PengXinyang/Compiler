@@ -24,9 +24,9 @@ int main() {
     symbol_handle->handleSymbol();
     ErrorPrint::printfError();
     GenerateIR* generate_ir = GenerateIR::getInstance();
-    generate_ir->generateLLVMIR();
     if(!ErrorPrint::isError) {
         symbol_handle->printSymbol();
+        generate_ir->generateLLVMIR();
         generate_ir->printLLVMIR();
     }
     //删除类

@@ -15,6 +15,7 @@
 #include "type/irType/IRChar.h"
 #include "type/irType/IRInt.h"
 #include "value/architecture/ConstValue.h"
+#include "value/architecture/data_structure/Loop.h"
 #include "value/architecture/user/instruction/AllocaInstruction.h"
 #include "value/architecture/user/instruction/CalculateInstruction.h"
 #include "value/architecture/user/instruction/CallInstruction.h"
@@ -283,8 +284,7 @@ Value *LLVMGenerate::VarDefIR(TreeNode *AstRoot) {
             var_symbol->value = new GlobalVariable(
                 new IRPointer(var_symbol->get_ir_type()),
                 IRName::getGlobalVariableName(var_symbol->token),
-                init_var,
-                true);
+                init_var);
         }else {
             //说明是一个数组
             init_var = new InitVar(
@@ -295,8 +295,7 @@ Value *LLVMGenerate::VarDefIR(TreeNode *AstRoot) {
             var_symbol->value = new GlobalVariable(
                 new IRArray(var_symbol->get_ir_type(),dim_size),
                 IRName::getGlobalVariableName(var_symbol->token),
-                init_var,
-                true
+                init_var
                 );
         }
     }else {
@@ -313,10 +312,10 @@ Value *LLVMGenerate::VarDefIR(TreeNode *AstRoot) {
             if(AstRoot->sonNode[AstRoot->son_num-1]->word.word=="<InitVal>") {
                 Value* value1 = symbol_value_instance->genValuesIR(AstRoot->sonNode[AstRoot->son_num-1])[0];
                 //如果左侧和右侧类型不同，强制转换
-                if(var_symbol->btype==1 && instanceof<IRInt>(value1)) {
+                if(var_symbol->btype==1 && instanceof<IRInt>(value1->value_type)) {
                     auto* trunc_value = new TruncInstruction(IRName::getLocalVariableName(),value1,new IRChar());
                     value1 = trunc_value;
-                }else if(var_symbol->btype==0 && instanceof<IRChar>(value1)) {
+                }else if(var_symbol->btype==0 && instanceof<IRChar>(value1->value_type)) {
                     auto* zext_value = new ZextInstruction(IRName::getLocalVariableName(),value1,new IRInt());
                     value1 = zext_value;
                 }else if(instanceof<ConstValue>(value1)) {
@@ -352,7 +351,18 @@ Value *LLVMGenerate::VarDefIR(TreeNode *AstRoot) {
             //子节点最后一位是constInitVal，说明需要赋值，store指令
             if(AstRoot->sonNode[AstRoot->son_num-1]->word.word=="<InitVal>") {
                 Value* pointer = instruction;
-                vector<Value*> value_list = symbol_value_instance->genValuesIR(AstRoot->sonNode[AstRoot->son_num-1]);
+                vector<Value*> value_list;
+                if(AstRoot->sonNode[AstRoot->son_num-1]->sonNode[0]->word.word_type=="STRCON") {
+                    //如果第一个子节点是常量字符串，说明是用字符串赋值
+                    //注意：要去掉首尾的引号
+                    for(int i = 1; i<initString.length()-1; ++i) {
+                        value_list.push_back(new ConstValue(new IRChar(), to_string(initString[i])));
+                    }
+                }
+                else {
+                    //否则，就是常规的数组赋值
+                    value_list = symbol_value_instance->genValuesIR(AstRoot->sonNode[AstRoot->son_num-1]);
+                }
                 int offset = 0;
                 for(Value* v: value_list) {
                     instruction = new GetelementptrInstruction(
@@ -361,6 +371,15 @@ Value *LLVMGenerate::VarDefIR(TreeNode *AstRoot) {
                         pointer,
                         new ConstValue(new IRInt(),to_string(offset)));
                     //cout<<instruction->toLLVM()<<endl;
+                    //数组赋值，强制类型转换
+                    if(instanceof<IRInt>(var_symbol->get_ir_type()) && instanceof<IRChar>(v->value_type)) {
+                        //将v的类型强制转换
+                        auto* zext_value = new ZextInstruction(IRName::getLocalVariableName(),v,new IRInt());
+                        v = zext_value;
+                    }else if(instanceof<IRChar>(var_symbol->get_ir_type()) && instanceof<IRInt>(v->value_type)) {
+                        auto* trunc_value = new TruncInstruction(IRName::getLocalVariableName(),v,new IRChar());
+                        v = trunc_value;
+                    }
                     new StoreInstruction(v,instruction);
                     offset++;
                 }
@@ -399,7 +418,7 @@ Value *LLVMGenerate::IfIR(TreeNode *AstRoot) {
 
     }
     auto* next_block = new BasicBlock(IRName::getBlockName());
-    //分析cond，如果有else则跳转的块是elseBlock，如果没有else应当跳到next_block
+    //分析cond，如果有else则跳转的块是ifFalseBlock，如果没有else应当跳到next_block
     if(father->son_num>5) {
         llvmExp->generateCondIR(father->sonNode[2],then_block,else_block);
     }
@@ -424,19 +443,155 @@ Value *LLVMGenerate::IfIR(TreeNode *AstRoot) {
     return nullptr;
 }
 
-Value *LLVMGenerate::ForIR(TreeNode *AstRoot) {
+/**
+* 'for' '(' [ForStmt] ';' [Cond] ';' [ForStmt] ')' Stmt
+* 其中，ForStmt和Cond均可以缺省
+* 示例：
+* int x;
+    for(x = 1; x< 1000;x = x+2){
+            x = x -1;
+    }
+* %1 = alloca i32, align 4
+  %2 = alloca i32, align 4
+  store i32 0, i32* %1, align 4
+  store i32 1, i32* %2, align 4
+  br label %3
 
+3:                                                ; preds = %9, %0
+; Cond比较块
+  %4 = load i32, i32* %2, align 4
+  %5 = icmp slt i32 %4, 1000
+  br i1 %5, label %6, label %12
+
+6:                                                ; preds = %3
+; 循环体的块，即Stmt
+  %7 = load i32, i32* %2, align 4
+  %8 = sub nsw i32 %7, 1
+  store i32 %8, i32* %2, align 4
+  br label %9
+
+9:                                                ; preds = %6
+; ForStmt2 处理的块
+  %10 = load i32, i32* %2, align 4
+  %11 = add nsw i32 %10, 2
+  store i32 %11, i32* %2, align 4
+  br label %3, !llvm.loop !2
+
+12:                                               ; preds = %3
+; 离开循环的块
+......
+可以看出，第一个ForStmt在进入for之前的块处理；下一个块是Cond，下一个块是Stmt，
+再下一个块是ForStmt2.最后一个块是跳出循环后的基本块
+并且实际上，ForStmt2的块可以和循环中Stmt的块合并，因为只有Stmt需要跳到ForStmt2
+至少有6个节点
+*/
+Value *LLVMGenerate::ForIR(TreeNode *AstRoot) {
+    TreeNode* father = AstRoot->father;
+    //由于树节点ForStmt，Cond可以存在，也可以不存在，这给数组标号取值带来了麻烦
+    //所以考虑先通过循环取出这些节点
+    TreeNode* ForStmt1_node = nullptr;
+    TreeNode* ForStmt2_node = nullptr;
+    TreeNode* cond_node = nullptr;
+    //最后一个子节点一定是Stmt
+    TreeNode* stmt_node = father->sonNode[father->son_num-1];
+    for(int i = 0;i<father->son_num;i++) {
+        if(father->sonNode[i]->word.word=="<ForStmt>") {
+            if(i == 2) {
+                //说明这是第一个ForStmt，因为第二个ForStmt标号至少是4
+                //并且第一个ForStmt如果存在，标号一定为2
+                ForStmt1_node = father->sonNode[i];
+            }else {
+                //是第二个ForStmt
+                ForStmt2_node = father->sonNode[i];
+            }
+        }else if(father->sonNode[i]->word.word=="<Cond>") {
+            cond_node = father->sonNode[i];
+        }
+    }
+    //首先，如果有第一个ForStmt，直接分析
+    if(ForStmt1_node) {
+        //说明有第一个ForStmt
+        generateLLVMIR(father->sonNode[2]);
+    }
+    BasicBlock* cond_block = nullptr;
+    if(cond_node) {
+        //说明有条件判断，应当生成一个条件判断块
+        cond_block = new BasicBlock(IRName::getBlockName());
+    }
+    //先生成循环块，再生成后继块。对于ForStmt2，直接与Stmt块合并即可
+    auto* stmt_block = new BasicBlock(IRName::getBlockName());
+    BasicBlock* for_stmt_2 = nullptr;
+    if(ForStmt2_node) {
+        for_stmt_2 = new BasicBlock(IRName::getBlockName());
+    }
+    auto* after_block = new BasicBlock(IRName::getBlockName());
+    auto* loop = new Loop(cond_block,for_stmt_2,stmt_block,after_block);
+    //压栈，将loop压入栈，处理多层循环
+    IRName::pushLoopStack(loop);
+    if(cond_node) {
+        //现在开始处理条件句
+        //首先，需要跳入条件块中
+        new JumpInstruction(cond_block);
+        //设置当前块为条件块
+        IRName::setNowBlock(cond_block);
+        //分析cond，由于cond为true跳到stmt，为false跳出循环
+        llvmExp->generateCondIR(cond_node,stmt_block,after_block);
+    }else {
+        //没有条件句，直接跳到循环
+        new JumpInstruction(stmt_block);
+    }
+    //现在应当跳到循环块了
+    IRName::setNowBlock(stmt_block);
+    //分析stmt
+    generateLLVMIR(stmt_node);
+    //循环体结束后，应当生成ForStmt2的块，如果ForStmt2存在
+    if(ForStmt2_node) {
+        //首先，跳到ForStmt2的块
+        new JumpInstruction(for_stmt_2);
+        //设置当前块是ForStmt2
+        IRName::setNowBlock(for_stmt_2);
+        generateLLVMIR(ForStmt2_node);
+    }
+    //无论ForStmt2是否存在，结束后都需要跳转。
+    //如果Cond存在就跳到Cond，否则直接跳到循环
+    //注意，这里只需要跳转，因为Cond和Stmt的内容已经在上面分析过了
+    if(cond_node) new JumpInstruction(cond_block);
+    else new JumpInstruction(stmt_block);
+    //退出循环
+    IRName::setNowBlock(after_block);
+    IRName::popLoopStack();
+    return nullptr;
 }
 
+/**
+* Stmt -> 'continue' ';'
+*/
 Value *LLVMGenerate::ContinueIR(TreeNode *AstRoot) {
-
+    //continue是直接进行下一轮循环。顺序如下
+    //首先，如果循环有ForStmt2，那么要先去算ForStmt2，跳到这个基本块
+    //然后，如果循环有Cond，那么要跳到Cond进行比较。
+    //最后，如果什么都没有，直接跳到循环中
+    auto* loop = IRName::getNowLoop();
+    auto* for_stmt_2 = loop->getForStmt2Block();
+    auto* cond_block = loop->getCondBlock();
+    auto* stmt_block = loop->getStmtBlock();
+    if(for_stmt_2) {
+        new JumpInstruction(for_stmt_2);
+    }else if(cond_block) {
+        new JumpInstruction(cond_block);
+    }else {
+        new JumpInstruction(stmt_block);
+    }
+    return nullptr;
 }
 
 /**
 * Stmt -> 'break' ';'
 */
 Value *LLVMGenerate::BreakIR(TreeNode *AstRoot) {
-    //new JumpInstruction(IRName::getNowLoop())
+    //直接跳出循环，所以取循环的“跳出循环块”即可
+    new JumpInstruction(IRName::getNowLoop()->getAfterBlock());
+    return nullptr;
 }
 
 //注意：return语句和函数的类型有密切的关系。如果两者类型不同，需要强制转换
@@ -625,7 +780,28 @@ Value *LLVMGenerate::NumberOrCharIR(TreeNode *AstRoot) {
     //数字或char
     if(AstRoot->word.word=="<Number>")return new ConstValue(new IRInt(),AstRoot->sonNode[0]->word.word);
     if(AstRoot->word.word=="<Character>") {
-        const int num = AstRoot->sonNode[0]->word.word[1];
+        //注意：一般情况下第一个是字母，但是特殊情况下，比如第一个是'\'，这时候需要结合后面的字母，看是不是转义字符。
+        int num = AstRoot->sonNode[0]->word.word[1];
+        if(num == '\\') {
+            //看看有没有下一个字符
+            if(AstRoot->sonNode[0]->word.word.length() > 2) {
+                char c = AstRoot->sonNode[0]->word.word[2];
+                //根据c的单词决定num的值
+                switch(c) {
+                    case 'a': num = 7;break;
+                    case 'b': num = 8;break;
+                    case 't': num = 9;break;
+                    case 'n': num = 10;break;
+                    case 'v': num = 11;break;
+                    case 'f': num = 12;break;
+                    case '\"': num = 34;break;
+                    case '\'': num = 39;break;
+                    case '\\': num = 92;break;
+                    case '0': num = 0;break;
+                    default: num = 92;
+                }
+            }
+        }
         return new ConstValue(new IRChar(),to_string(num));
     }
     return nullptr;
@@ -662,7 +838,18 @@ Value *LLVMGenerate::UnaryExpIR(TreeNode *AstRoot) {
                 new ConstValue(ans->value_type,"0"),
                 ans);
         }if(type=="!") {
-            //TODO: 涉及条件取值，之后再写
+            /*取反，当ans为0时，得到1；所以只需要判断ans是不是0即可。
+            * if(!r)
+            * %3 = icmp ne i32 %2, 0
+            * %3 = icmp ne i8 %2, 0
+            * 事实上，i8和i32都可以，只有比较两个变量时才需要强制转换成i32
+            * br i1 %3, label % 7, label % 4
+            */
+            return new IcmpInstruction(
+                IRName::getLocalVariableName(),
+                "eq",
+                ans,
+                new ConstValue(ans->value_type,"0"));
         }
     }else {
         //函数取值，先从符号表获取函数的符号
@@ -782,8 +969,10 @@ Value *LLVMGenerate::AddExpIR(TreeNode *AstRoot) {
 Value *LLVMGenerate::RelExpIR(TreeNode *AstRoot) {
     //分析第一个元素
     Value* ans = generateLLVMIR(AstRoot->sonNode[0]);
-    //如果只有一个子节点，则返回ans
-    if(AstRoot->son_num<=1) return ans;
+    //如果只有一个子节点，则ans等于0为false，不等于0为true。所以让ans与0比
+    if(AstRoot->son_num<=1) {
+        return ans;
+    }
     //说明有两个子节点，第一个是Res，第二个是Add
     Value* ans2 = generateLLVMIR(AstRoot->sonNode[2]);
     //注意：条件判断中，如果有两个值比较，必须将值强转成int，才能判断
@@ -973,7 +1162,7 @@ Value *LLVMGenerate::FuncFParamIR(TreeNode *AstRoot) {
 Value *LLVMGenerate::AssignIR(TreeNode *AstRoot) {
     //理论上，进入这个函数的时候，处于等于号“=”的状态
     TreeNode* father = AstRoot->father;
-    //如果只有三个孩子，说明是Exp，否则就是两个IO函数
+    //如果只有4个孩子，说明是Exp，否则就是两个IO函数
     if(father==nullptr) {
         printf("Error in AssignIR\n");
         return nullptr;
@@ -1030,8 +1219,8 @@ void LLVMGenerate::quitNowSymbolTable() {
 }
 
 void LLVMGenerate::changeType(Value **value1, Value **value2) {
-    //说明二者类型不同，用强制转换，低转高
-    if(instanceof<IRChar>((*value1)->value_type)&& instanceof<IRInt>((*value2)->value_type)) {
+    //在参与加减乘除运算时，char要全部转成int
+    if(!instanceof<IRInt>((*value1)->value_type)) {
         //说明第一个ans需要强制转换
         Value* zext_ans = new ZextInstruction(
             IRName::getLocalVariableName(),
@@ -1039,7 +1228,7 @@ void LLVMGenerate::changeType(Value **value1, Value **value2) {
             new IRInt()
             );
         *value1 = zext_ans;
-    }else if(instanceof<IRInt>((*value1)->value_type) && instanceof<IRChar>((*value2)->value_type)){
+    }if(!instanceof<IRInt>((*value2)->value_type)){
         //第二个需要强制类型转换，低转高
         Value* zext_ans2 = new ZextInstruction(
             IRName::getLocalVariableName(),

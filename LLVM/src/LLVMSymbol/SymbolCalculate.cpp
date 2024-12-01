@@ -126,7 +126,28 @@ int SymbolCalculate::calculateNumberOrChar(TreeNode *root) {
         return stoi(root->sonNode[0]->word.word);
     }
     if(root->word.word=="<Character>") {
-        return root->sonNode[0]->word.word[1];
+        int num = root->sonNode[0]->word.word[1];
+        if(num == '\\') {
+            //看看有没有下一个字符
+            if(root->sonNode[0]->word.word.length() > 2) {
+                char c = root->sonNode[0]->word.word[2];
+                //根据c的单词决定num的值
+                switch(c) {
+                    case 'a': num = 7;break;
+                    case 'b': num = 8;break;
+                    case 't': num = 9;break;
+                    case 'n': num = 10;break;
+                    case 'v': num = 11;break;
+                    case 'f': num = 12;break;
+                    case '\"': num = 34;break;
+                    case '\'': num = 39;break;
+                    case '\\': num = 92;break;
+                    case '0': num = 0;break;
+                    default: num = 92;
+                }
+            }
+        }
+        return num;
     }
 }
 

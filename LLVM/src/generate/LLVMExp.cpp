@@ -19,6 +19,7 @@
 #include "value/architecture/user/instruction/LoadInstruction.h"
 #include "value/architecture/user/instruction/StoreInstruction.h"
 #include "value/architecture/user/instruction/TruncInstruction.h"
+#include "value/architecture/user/instruction/ZextInstruction.h"
 #include "value/architecture/user/instruction/IOInstruction/IOGetChar.h"
 #include "value/architecture/user/instruction/IOInstruction/IOGetInt.h"
 
@@ -45,13 +46,26 @@ Value *LLVMExp::generateAddressLLVM(TreeNode* AstRoot) {
             return lval_symbol->value;
         }
         if(lval_symbol->is_array) {
-            //说明是取的数组值
-            return new GetelementptrInstruction(
+            //说明是取的数组值，但是也有可能是形参的地址
+            Value* lval_value = lval_symbol->value;
+            Value* instruction;
+            if(instanceof<IRPointer>(lval_value->value_type) && instanceof<IRPointer>(dynamic_cast<IRPointer*>(lval_value->value_type)->ir_type())) {
+                //只有对于指针类型的形参变量，alloca之后是二重指针。对于这种指针，需要先load，再get
+                Value* load  = new LoadInstruction(IRName::getLocalVariableName(),lval_value);
+                instruction = new GetelementptrInstruction(
+                    lval_symbol->get_ir_type(),
+                    IRName::getLocalVariableName(),
+                    load,
+                    args[0]
+                    );
+            }
+            else instruction = new GetelementptrInstruction(
                 lval_symbol->get_ir_type(),
                 IRName::getLocalVariableName(),
                 lval_symbol->value,
                 args[0]
                 );
+            return instruction;
         }
     }
     return nullptr;
@@ -62,7 +76,8 @@ Value *LLVMExp::generateLValIR(TreeNode *AstRoot) {
     for(auto son:AstRoot->sonNode) {
         if(son->word.word=="<Exp>") {
             //只需要先分析Exp子节点，如果有，这就是数组
-            args.push_back(llvmGenerate->generateLLVMIR(son));
+            Value* Exp = llvmGenerate->generateLLVMIR(son);
+            args.push_back(Exp);
         }
     }
     //获取第一个子节点，LVal的符号Ident
@@ -78,7 +93,16 @@ Value *LLVMExp::generateVarValueIR(const vector<Value *> &values, Symbol *symbol
     }
     if(values.empty()) {
         //说明没有Exp，应当是函数调用的数组指针，默认从0获取
-        auto* array_value = new Value(*symbol->value);
+        if(instanceof<AllocaInstruction>(symbol->value)) {
+            //只需要考虑指针指令?
+            if(instanceof<IRPointer>(dynamic_cast<AllocaInstruction*>(symbol->value)->get_alloca_ir_type())) {
+                //说明是指针类型，先load指针，再get地址，再load值
+                auto load_instrction = new LoadInstruction(IRName::getLocalVariableName(),symbol->value);
+                return new GetelementptrInstruction(
+                    symbol->get_ir_type(),IRName::getLocalVariableName(),
+                    load_instrction,new ConstValue(new IRInt(),"0"));
+            }
+        }
         //将array_value转成指针类型
         return new GetelementptrInstruction(
             symbol->get_ir_type(),
@@ -142,9 +166,9 @@ Value *LLVMExp::generateGetCharIR(const TreeNode *AstRoot) {
     return new StoreInstruction(result,pointer);
 }
 
-void LLVMExp::generateCondIR(TreeNode *AstRoot, BasicBlock *thenBlock, BasicBlock *elseBlock) {
+void LLVMExp::generateCondIR(TreeNode *AstRoot, BasicBlock *ifTrueBlock, BasicBlock *ifFalseBlock) {
     if(AstRoot->sonNode[0]->word.word=="<LOrExp>") {
-        generateLOrExpIR(AstRoot->sonNode[0],thenBlock,elseBlock);
+        generateLOrExpIR(AstRoot->sonNode[0],ifTrueBlock,ifFalseBlock);
     }
 }
 
@@ -183,52 +207,47 @@ void LLVMExp::generateCondIR(TreeNode *AstRoot, BasicBlock *thenBlock, BasicBloc
   ret i32 %19
 *
 */
-void LLVMExp::generateLOrExpIR(TreeNode *AstRoot, BasicBlock *thenBlock, BasicBlock *elseBlock) {
-    for(const auto son:AstRoot->sonNode) {
-        if(son->word.word=="<LAndExp>") {
-            if(((AstRoot->father && AstRoot->father->son_num>1) || AstRoot->son_num>1) && AstRoot->father->word.word == "<LOrExp>") {
-                //这里需要处理短路运算，所以要创建一个新的基本块。
-                //如果这里求完后符合短路特性，就不用计算后面
-                /*
-                *if (a || (b && c)) {
-                *    // 处理a为true的情况
-                *} else {
-                *    // 处理a为false的情况
-                *}
-                * 如果 a 为 true，我们跳过 b && c 的计算，直接跳转到 thenBlock。
-                * 如果 a 为 false，我们需要生成一个新的基本块来处理 (b && c) 的计算，避免不必要的计算。
-                */
-                //新生成块，处理子节点的LAndExp
-                auto* new_else_block = new BasicBlock(IRName::getBlockName());
-                generateLAndExpIR(son,thenBlock,new_else_block);
-                IRName::setNowBlock(new_else_block);
-            }else {
-                generateLAndExpIR(son,thenBlock,elseBlock);
-            }
-        }else if(son->word.word=="<LOrExp>") {
-            generateLOrExpIR(son,thenBlock,elseBlock);
-        }
+void LLVMExp::generateLOrExpIR(TreeNode *AstRoot, BasicBlock *ifTrueBlock, BasicBlock *ifFalseBlock) {
+    //这里需要处理短路运算，所以要创建一个新的基本块。
+    //如果这里求完后符合短路特性，就不用计算后面
+    /*
+    *if (a || (b && c)) {
+    *    // 处理a为true的情况
+    *} else {
+    *    // 处理a为false的情况
+    *}
+    * 如果 a 为 true，我们跳过 b && c 的计算，直接跳转到 ifTrueBlock。
+    * 如果 a 为 false，我们需要生成一个新的基本块来处理 (b && c) 的计算，避免不必要的计算。
+    */
+    if(AstRoot->son_num<=1) {
+        //只有一个节点，直接按照LAnd分析
+        generateLAndExpIR(AstRoot->sonNode[0],ifTrueBlock,ifFalseBlock);
+    }else {
+        //否则，左侧是LOr，右侧是LAnd
+        auto* new_block = new BasicBlock(IRName::getBlockName());
+        //如果第一个条件为真，仍然跳到True的基本块；如果第一个条件为假，不应当跳到False块，而是跳到一个新的块去分析第二个条件LAnd
+        generateLOrExpIR(AstRoot->sonNode[0],ifTrueBlock,new_block);
+        IRName::setNowBlock(new_block);
+        generateLAndExpIR(AstRoot->sonNode[2],ifTrueBlock,ifFalseBlock);
     }
 }
 
-void LLVMExp::generateLAndExpIR(TreeNode *AstRoot, BasicBlock *thenBlock, BasicBlock *elseBlock) {
-    for(const auto son:AstRoot->sonNode) {
-        if(son->word.word=="<EqExp>") {
-            if(((AstRoot->father && AstRoot->father->son_num>1) || AstRoot->son_num>1) && AstRoot->father->word.word == "<LAndExp>") {
-                //新生成块，处理短路求值失败后的条件句
-                auto* next_block = new BasicBlock(IRName::getBlockName());
-                generateEqExpIR(son,next_block,elseBlock);
-                IRName::setNowBlock(next_block);
-            }else {
-                generateEqExpIR(son,thenBlock,elseBlock);
-            }
-        }else if(son->word.word=="<LOrExp>") {
-            generateLAndExpIR(son,thenBlock,elseBlock);
-        }
+void LLVMExp::generateLAndExpIR(TreeNode *AstRoot, BasicBlock *ifTrueBlock, BasicBlock *ifFalseBlock) {
+    if(AstRoot->son_num<=1) {
+        //只有一个节点，直接按照Eq分析
+        generateEqExpIR(AstRoot->sonNode[0],ifTrueBlock,ifFalseBlock);
+    }else {
+        //否则，左侧是LAnd，右侧是Eq
+        auto* new_block = new BasicBlock(IRName::getBlockName());
+        //如果第一个条件为假，直接跳到False块，
+        //如果第一个条件为真，仍需跳到下一个条件块；
+        generateLAndExpIR(AstRoot->sonNode[0],new_block,ifFalseBlock);
+        IRName::setNowBlock(new_block);
+        generateEqExpIR(AstRoot->sonNode[2],ifTrueBlock,ifFalseBlock);
     }
 }
 
-void LLVMExp::generateEqExpIR(TreeNode *AstRoot, BasicBlock *thenBlock, BasicBlock *elseBlock) {
+void LLVMExp::generateEqExpIR(TreeNode *AstRoot, BasicBlock *ifTrueBlock, BasicBlock *ifFalseBlock) {
     Value* condition = llvmGenerate->generateLLVMIR(AstRoot);
     if(instanceof<IRInt>(condition->value_type)) {
         const auto icmp = new IcmpInstruction(
@@ -236,6 +255,12 @@ void LLVMExp::generateEqExpIR(TreeNode *AstRoot, BasicBlock *thenBlock, BasicBlo
             "ne",condition,
             new ConstValue(new IRInt(),"0"));
         condition = icmp;
+    }else if(instanceof<IRChar>(condition->value_type)) {
+        const auto icmp = new IcmpInstruction(
+            IRName::getLocalVariableName(),
+            "ne",condition,
+            new ConstValue(new IRChar(),"0"));
+        condition = icmp;
     }
-    new BrInstruction(condition,thenBlock,elseBlock);
+    new BrInstruction(condition,ifTrueBlock,ifFalseBlock);
 }

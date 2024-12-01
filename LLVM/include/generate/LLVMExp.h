@@ -49,19 +49,19 @@ public:
     /**
     * Cond -> LOrExp
     */
-    void generateCondIR(TreeNode* AstRoot,BasicBlock* thenBlock, BasicBlock* elseBlock);
+    void generateCondIR(TreeNode* AstRoot,BasicBlock* ifTrueBlock, BasicBlock* ifFalseBlock);
     /**
     * LorExp -> LAndExp | LOrExp '||' LAndExp
     */
-    void generateLOrExpIR(TreeNode* AstRoot,BasicBlock* thenBlock, BasicBlock* elseBlock);
+    void generateLOrExpIR(TreeNode* AstRoot,BasicBlock* ifTrueBlock, BasicBlock* ifFalseBlock);
     /**
     * LAndExp -> EqExp | LAndExp '&&' EqExp
     */
-    void generateLAndExpIR(TreeNode* AstRoot,BasicBlock* thenBlock, BasicBlock* elseBlock);
+    void generateLAndExpIR(TreeNode* AstRoot,BasicBlock* ifTrueBlock, BasicBlock* ifFalseBlock);
     /**
     * EqExp -> RelExp | EqExp ('=='|'!=') RelExp
     */
-    void generateEqExpIR(TreeNode* AstRoot,BasicBlock* thenBlock, BasicBlock* elseBlock);
+    void generateEqExpIR(TreeNode* AstRoot,BasicBlock* ifTrueBlock, BasicBlock* ifFalseBlock);
 };
 
 

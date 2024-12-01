@@ -4,11 +4,11 @@
 
 #ifndef BASICBLOCK_H
 #define BASICBLOCK_H
-#include "data_structure/Loop.h"
 #include "value/Value.h"
 
 class Function;
 class Instruction;
+class Loop;
 //基本块类，一个函数有多个基本块，至少有一个
 class BasicBlock :public Value{
     //一个基本块内有多个指令,且不能包括跳转和返回指令。

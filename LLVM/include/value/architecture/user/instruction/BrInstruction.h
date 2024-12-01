@@ -19,8 +19,8 @@
 class BrInstruction :public Instruction{
 private:
     Value* condition = nullptr; //条件
-    BasicBlock*thenBlock = nullptr;//条件为真的基本块
-    BasicBlock* elseBlock = nullptr;//条件为假的基本块
+    BasicBlock*ifTrueBlock = nullptr;//条件为真的基本块
+    BasicBlock* ifFalseBlock = nullptr;//条件为假的基本块
 public:
     [[nodiscard]] Value * getCondition() const {
         return condition;
@@ -31,25 +31,25 @@ public:
         opValueChain[0] = condition;
     }
 
-    [[nodiscard]] BasicBlock * getThenBlock() const {
-        return thenBlock;
+    [[nodiscard]] BasicBlock * getifTrueBlock() const {
+        return ifTrueBlock;
     }
 
-    void setThenBlock(BasicBlock *then_block) {
-        thenBlock = then_block;
-        opValueChain[1] = then_block;
+    void setIfTrueBlock(BasicBlock *if_true_block) {
+        ifTrueBlock = if_true_block;
+        opValueChain[1] = if_true_block;
     }
 
-    [[nodiscard]] BasicBlock * getElseBlock() const {
-        return elseBlock;
+    [[nodiscard]] BasicBlock * getIfFalseBlock() const {
+        return ifFalseBlock;
     }
 
-    void setElseBlock(BasicBlock *else_block) {
-        elseBlock = else_block;
+    void setifFalseBlock(BasicBlock *else_block) {
+        ifFalseBlock = else_block;
         opValueChain[2] = else_block;
     }
 public:
-    BrInstruction(Value* condition, BasicBlock* thenBlock, BasicBlock* elseBlock);
+    BrInstruction(Value* condition, BasicBlock* ifTrueBlock, BasicBlock* ifFalseBlock);
     string toLLVM() override;
 };
 

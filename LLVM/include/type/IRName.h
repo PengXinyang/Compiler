@@ -65,9 +65,9 @@ public:
     static void addInstruction(Instruction* instruction);
     static void addConstString(ConstString* const_string);
     //压循环栈
-    static void pushLoop(Loop* loop);
+    static void pushLoopStack(Loop* loop);
     //弹循环栈
-    static void popLoop();
+    static void popLoopStack();
 };
 
 

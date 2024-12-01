@@ -102,10 +102,10 @@ void IRName::addConstString(ConstString *const_string) {
     now_module->addConstantString(const_string);
 }
 
-void IRName::pushLoop(Loop *loop) {
+void IRName::pushLoopStack(Loop *loop) {
     loopStack.push(loop);
 }
 
-void IRName::popLoop() {
+void IRName::popLoopStack() {
     loopStack.pop();
 }
