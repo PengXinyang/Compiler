@@ -15,6 +15,7 @@ public:
     explicit IOPutStr(ConstString* constString);
     static string getIODefine();
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

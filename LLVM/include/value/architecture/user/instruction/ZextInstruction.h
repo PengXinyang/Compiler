@@ -19,6 +19,7 @@ public:
     ZextInstruction() = default;
     ZextInstruction(const string& name, Value* value, IRType* final_type);
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

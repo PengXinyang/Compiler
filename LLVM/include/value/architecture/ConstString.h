@@ -17,6 +17,7 @@ public:
     [[nodiscard]] IRPointer *getIRPointer() const;
     [[nodiscard]] string getString() const;
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

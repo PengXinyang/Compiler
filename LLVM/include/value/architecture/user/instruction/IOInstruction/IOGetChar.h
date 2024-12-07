@@ -14,6 +14,7 @@ public:
     //获取getchar定义语句
     static string getIODefine();
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

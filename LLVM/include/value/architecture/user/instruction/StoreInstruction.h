@@ -21,6 +21,8 @@ public:
     //store <ty> <value>, ptr <pointer>,将value存到pointer中
     StoreInstruction(Value* value,Value* pointer);
     string toLLVM() override;
+    //存指令sw
+    void generateMIPS() override;
 };
 
 

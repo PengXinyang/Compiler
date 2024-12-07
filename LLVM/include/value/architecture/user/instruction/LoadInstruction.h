@@ -24,6 +24,8 @@ public:
     LoadInstruction() = default;
     LoadInstruction(const string& name,Value* ptr_value);
     string toLLVM() override;
+    //lw register_destination, RAM_source
+    void generateMIPS() override;
 };
 
 

@@ -7,7 +7,7 @@
 IRArray::IRArray(IRType* type, const vector<int> &dims) {
     elementType = type;
     if(dims.empty()) {
-        this->dims = vector(1, 0);
+        this->dims = vector<int>(1, 0);
     }
     else this->dims = dims;
 }

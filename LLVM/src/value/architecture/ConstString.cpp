@@ -7,6 +7,7 @@
 #include <regex>
 
 #include "optimize/OptimizerInit.h"
+#include "structure/data/AsciizStructure.h"
 #include "type/IRName.h"
 #include "type/irType/IRArray.h"
 #include "type/irType/IRChar.h"
@@ -39,4 +40,9 @@ string ConstString::toLLVM() {
     string type_st = getIRPointer()->ir_type()->toLLVM();
     string place_str = regex_replace(str,regex("\n"),"\\0A");
     return value_name+ " = private unnamed_addr constant " + type_st + " c\"" + place_str + "\\00\"";
+}
+
+void ConstString::generateMIPS() {
+    //排除@
+    new AsciizStructure(value_name.substr(1),str);
 }

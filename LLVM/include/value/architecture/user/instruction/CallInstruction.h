@@ -23,6 +23,7 @@ public:
     CallInstruction(const string& name, Function* call_function, vector<Value*>& args);
     [[nodiscard]] Function* getCallFunction() const;
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

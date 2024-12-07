@@ -3,6 +3,7 @@ project(Compiler)
 
 set(CMAKE_CXX_STANDARD 17)
 include_directories(./LLVM/include)
+include_directories(./Mips/include)
 add_executable(Compiler main.cpp
         Lexer/src/Lexer.cpp
         Lexer/include/Lexer.h
@@ -121,4 +122,60 @@ add_executable(Compiler main.cpp
         LLVM/include/value/architecture/user/instruction/IcmpInstruction.h
         LLVM/src/value/architecture/user/instruction/JumpInstruction.cpp
         LLVM/include/value/architecture/user/instruction/JumpInstruction.h
+        Mips/src/structure/Register.cpp
+        Mips/include/structure/Register.h
+        Mips/src/structure/Segment.cpp
+        Mips/include/structure/Segment.h
+        Mips/src/structure/MipsStructure.cpp
+        Mips/include/structure/MipsStructure.h
+        Mips/src/generate/MipsContent.cpp
+        Mips/include/generate/MipsContent.h
+        Mips/src/MipsGenerate.cpp
+        Mips/include/MipsGenerate.h
+        Mips/src/structure/text/MipsInstruction/JInstruction.cpp
+        Mips/include/structure/text/MipsInstruction/JInstruction.h
+        Mips/src/structure/text/MipsInstruction/JalInstruction.cpp
+        Mips/include/structure/text/MipsInstruction/JalInstruction.h
+        Mips/src/structure/text/MipsBlock.cpp
+        Mips/include/structure/text/MipsBlock.h
+        Mips/src/structure/data/DataMipsStructure.cpp
+        Mips/include/structure/data/DataMipsStructure.h
+        Mips/src/structure/data/WordStructure.cpp
+        Mips/include/structure/data/WordStructure.h
+        Mips/src/structure/data/ByteStructure.cpp
+        Mips/include/structure/data/ByteStructure.h
+        Mips/src/structure/data/SpaceStructure.cpp
+        Mips/include/structure/data/SpaceStructure.h
+        Mips/src/structure/data/AsciizStructure.cpp
+        Mips/include/structure/data/AsciizStructure.h
+        Mips/src/structure/text/MipsInstruction/BTypeInstruction.cpp
+        Mips/include/structure/text/MipsInstruction/BTypeInstruction.h
+        Mips/src/structure/text/MipsInstruction/ITypeInstruction.cpp
+        Mips/include/structure/text/MipsInstruction/ITypeInstruction.h
+        Mips/src/structure/text/MipsInstruction/MTypeInstruction.cpp
+        Mips/include/structure/text/MipsInstruction/MTypeInstruction.h
+        Mips/src/structure/text/MipsInstruction/LSTypeInstruction.cpp
+        Mips/include/structure/text/MipsInstruction/LSTypeInstruction.h
+        Mips/src/structure/text/MipsInstruction/RTypeInstruction.cpp
+        Mips/include/structure/text/MipsInstruction/RTypeInstruction.h
+        Mips/src/structure/text/MipsInstruction/SyscallInstruction.cpp
+        Mips/include/structure/text/MipsInstruction/SyscallInstruction.h
+        Mips/src/structure/text/PseudoInstruction/MoveInstruction.cpp
+        Mips/include/structure/text/PseudoInstruction/MoveInstruction.h
+        Mips/src/structure/text/PseudoInstruction/LiInstruction.cpp
+        Mips/include/structure/text/PseudoInstruction/LiInstruction.h
+        Mips/src/structure/text/PseudoInstruction/LaInstruction.cpp
+        Mips/include/structure/text/PseudoInstruction/LaInstruction.h
+        Mips/src/Register/RegisterController.cpp
+        Mips/include/Register/RegisterController.h
+        Mips/src/Register/RegisterTool.cpp
+        Mips/include/Register/RegisterTool.h
+        Mips/src/generate/MipsCell.cpp
+        Mips/include/generate/MipsCell.h
+        Mips/src/structure/text/MipsInstruction/Annotation.cpp
+        Mips/include/structure/text/MipsInstruction/Annotation.h
+        Mips/src/structure/DataSegment.cpp
+        Mips/include/structure/DataSegment.h
+        Mips/src/structure/TextSegment.cpp
+        Mips/include/structure/TextSegment.h
 )

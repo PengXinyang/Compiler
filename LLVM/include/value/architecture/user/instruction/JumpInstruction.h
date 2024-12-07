@@ -21,6 +21,7 @@ public:
     void setDestination(BasicBlock* destination);
     void setIsMipsReduce(bool isMipsReduce);
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

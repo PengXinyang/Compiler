@@ -6,7 +6,11 @@
 
 #include <sstream>
 
+#include "generate/MipsCell.h"
 #include "optimize/OptimizerInit.h"
+#include "Register/RegisterController.h"
+#include "Register/RegisterTool.h"
+#include "structure/text/MipsBlock.h"
 #include "type/IRName.h"
 #include "type/irType/IRBlock.h"
 
@@ -14,6 +18,7 @@ Function::Function(const string& name, IRType* returnType):GlobalValue(new IRBlo
     this->returnType = returnType;
     basicBlocks = vector<BasicBlock*>();
     params = vector<Param*>();
+    valueRegisterMap = unordered_map<Value*, Register*>();
     if(!OptimizerInit::isOptimize()) {
         IRName::addFunction(this);
     }
@@ -60,4 +65,24 @@ string Function::toLLVM() {
     }
     os<<"\n}";
     return os.str();
+}
+
+void Function::generateMIPS() {
+    new MipsBlock(value_name.substr(1));
+    MipsCell::resetFunction(this);
+    int num = min(4,static_cast<int>(params.size()));
+    for(int i=0;i<num;++i) {
+        //前三个参数只需要压栈，由a0-a2寄存器保存
+        RegisterController::allocateRegister(
+            params[i],
+            Register::getRegister(Register::regTransform(static_cast<int>(RegisterName::$a0) + i))
+        );
+        RegisterTool::moveValue(params[i]);
+    }
+    for(int i=4;i<params.size();++i) {
+        RegisterTool::moveValue(params[i]);
+    }
+    for(const auto basicBlock:basicBlocks) {
+        basicBlock->generateMIPS();
+    }
 }

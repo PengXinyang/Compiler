@@ -21,6 +21,7 @@ public:
     explicit ReturnInstruction(Value* return_value);
     [[nodiscard]] Value* getReturnValue() const;
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

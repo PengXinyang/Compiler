@@ -57,7 +57,7 @@ public:
     //将所有的使用本Value的使用者全部替换为使用新的Value
     void replaceAllUser(Value* value);
     //生成汇编的函数，具体到不同的类再具体重写
-    void virtual toMIPS(){}
+    void virtual generateMIPS(){}
     //保留toLLVM的方法，生成中间代码字符串
     string virtual toLLVM() { return ""; }
 };

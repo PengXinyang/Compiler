@@ -4,6 +4,9 @@
 
 #include "../../../../../include/value/architecture/user/instruction/GetelementptrInstruction.h"
 
+#include "Register/RegisterController.h"
+#include "Register/RegisterTool.h"
+#include "structure/Register.h"
 #include "type/irType/IRArray.h"
 #include "type/irType/IRPointer.h"
 
@@ -42,4 +45,24 @@ string GetelementptrInstruction::toLLVM() {
     //ConstValue的num字段？
     oss<<opValueChain[1]->value_type->toLLVM()<<" "<<opValueChain[1]->value_name;
     return oss.str();
+}
+
+void GetelementptrInstruction::generateMIPS() {
+    Instruction::generateMIPS();
+    // 首先在寄存器控制器中查找当前指令对应的寄存器，如果为null则使用t8寄存器
+    Register* rd = RegisterController::getRegister(this);
+    if(!rd) rd = Register::getRegister(RegisterName::$t8);
+    //同理，也需要查找当前指令的操作数对应的寄存器，如果rs为null则使用t8寄存器,
+    //如果rt为null则使用t9寄存器,当然这里由于我们的操作数是一个指针，所以我们还需要
+    //从指针中获取对应的地址
+    Register* pointer_register = RegisterController::getRegister(opValueChain[0]);
+    Register* offset_register = RegisterController::getRegister(opValueChain[1]);
+    pointer_register = RegisterTool::loadPointerValue(opValueChain[0],pointer_register,Register::getRegister(RegisterName::$t8));
+    IRType* ir_type = opValueChain[0]->value_type;
+    if(instanceof<IRArray>(ir_type)) {
+        ir_type = dynamic_cast<IRArray*>(ir_type)->get_element_type();
+    }
+    offset_register = RegisterTool::loadMemoryOffset(opValueChain[1],rd,Register::getRegister(RegisterName::$t9),pointer_register,offset_register,ir_type);
+    //如果之前使用了默认寄存器，则需要重新分配地址，并在寄存器控制器中更新对应的寄存器
+    RegisterTool::reAllocaRegister(this,rd);
 }

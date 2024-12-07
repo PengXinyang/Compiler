@@ -32,6 +32,7 @@ public:
      */
     GetelementptrInstruction(IRType* ir_type, const string& name, Value* ptr_value,Value* offset_value);
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

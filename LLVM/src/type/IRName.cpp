@@ -45,7 +45,7 @@ string IRName::getBlockName(Function *function) {
     if(blockMap.find(function) == blockMap.end()) { index = 0;}
     else index = blockMap[function];
     blockMap[function] = index + 1;
-    return IRPreName::toLLVM(IRPreType::BLOCK) + to_string(index);
+    return function->value_name.substr(1) + "_" + IRPreName::toLLVM(IRPreType::BLOCK) + to_string(index);
 }
 
 string IRName::getLocalVariableName(Function *function) {

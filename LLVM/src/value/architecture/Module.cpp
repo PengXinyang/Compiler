@@ -7,6 +7,11 @@
 #include <sstream>
 
 #include "instanceof.h"
+#include "structure/text/MipsBlock.h"
+#include "structure/text/MipsInstruction/JalInstruction.h"
+#include "structure/text/MipsInstruction/JInstruction.h"
+#include "structure/text/MipsInstruction/SyscallInstruction.h"
+#include "structure/text/PseudoInstruction/LiInstruction.h"
 #include "type/irType/IRBlock.h"
 #include "value/architecture/user/instruction/IOInstruction/IOGetChar.h"
 #include "value/architecture/user/instruction/IOInstruction/IOGetInt.h"
@@ -22,7 +27,7 @@ void Module::addGlobalValue(GlobalValue *globalValue) {
     globalValues.push_back(globalValue);
 }
 
-vector<GlobalVariable *> &Module::getGlobalValues() {
+vector<GlobalVariable *> Module::getGlobalValues() {
     vector<GlobalVariable *> global_variables = vector<GlobalVariable *>();
     for (auto global_value : globalValues) {
         //TODO: 需要检查这个instanceof是否可以正常使用
@@ -33,7 +38,7 @@ vector<GlobalVariable *> &Module::getGlobalValues() {
     return global_variables;
 }
 
-vector<Function *> &Module::getFunctions() {
+vector<Function *> Module::getFunctions() {
     auto functions = vector<Function *>();
     for (auto global_value : globalValues) {
         //TODO: 需要检查这个instanceof是否可以正常使用
@@ -66,4 +71,23 @@ string Module::toLLVM() {
         os << global_value->toLLVM() << "\n";
     }
     return os.str();
+}
+
+void Module::generateMIPS() {
+    vector<GlobalVariable *> global_variables = getGlobalValues();
+    vector<Function *> functions = getFunctions();
+    for(const auto global_variable : global_variables) {
+        global_variable->generateMIPS();
+    }
+    for(const auto constantString : constantStrings) {
+        constantString->generateMIPS();
+    }
+    new JalInstruction("main");
+    new JInstruction("end");
+    for(const auto function : functions) {
+        function->generateMIPS();
+    }
+    new MipsBlock("end");
+    new LiInstruction(Register::getRegister(RegisterName::$v0),10);
+    new SyscallInstruction();
 }

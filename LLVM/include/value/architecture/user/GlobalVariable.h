@@ -25,7 +25,7 @@ public:
     }
     string toLLVM() override;
     //生成mips用
-    void toMIPS() override;
+    void generateMIPS() override;
 };
 
 

@@ -29,7 +29,7 @@ public:
     AllocaInstruction() = default;
     AllocaInstruction(IRType* ir_type, const string& name);
     string toLLVM() override;
-
+    void generateMIPS() override;
 };
 
 

@@ -3,6 +3,7 @@
 #include<iostream>
 
 #include "GenerateIR.h"
+#include "MipsGenerate.h"
 #include "ErrorHandle/include/ErrorPrint.h"
 #include "Lexer/include/TokenType.h"
 #include "Parser/include/Parser.h"
@@ -28,6 +29,9 @@ int main() {
         symbol_handle->printSymbol();
         generate_ir->generateLLVMIR();
         generate_ir->printLLVMIR();
+        MipsGenerate* mips_generate = MipsGenerate::getInstance(generate_ir->getModule());
+        mips_generate->generateMips();
+        mips_generate->printMips();
     }
     //删除类
     Lexer::deleteLexerInstance();

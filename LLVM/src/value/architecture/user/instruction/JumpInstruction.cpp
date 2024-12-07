@@ -4,6 +4,7 @@
 
 #include "../../../../../include/value/architecture/user/instruction/JumpInstruction.h"
 
+#include "structure/text/MipsInstruction/JInstruction.h"
 #include "type/irType/IRVoid.h"
 #include "value/architecture/BasicBlock.h"
 
@@ -29,4 +30,10 @@ string JumpInstruction::toLLVM() {
 
 void JumpInstruction::setIsMipsReduce(const bool isMipsReduce) {
     this->isMipsReduce = isMipsReduce;
+}
+
+void JumpInstruction::generateMIPS() {
+    Instruction::generateMIPS();
+    //跳转到目标基本块
+    new JInstruction(opValueChain[0]->value_name);
 }

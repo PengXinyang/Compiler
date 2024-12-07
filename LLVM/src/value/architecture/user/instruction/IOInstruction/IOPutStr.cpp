@@ -4,6 +4,9 @@
 
 #include "../../../../../../include/value/architecture/user/instruction/IOInstruction/IOPutStr.h"
 
+#include "structure/text/MipsInstruction/SyscallInstruction.h"
+#include "structure/text/PseudoInstruction/LaInstruction.h"
+#include "structure/text/PseudoInstruction/LiInstruction.h"
 #include "type/irType/IRVoid.h"
 
 IOPutStr::IOPutStr(ConstString* constString)
@@ -27,3 +30,13 @@ string IOPutStr::toLLVM() {
             const_string_pointer->toLLVM() + " " +
             const_sting_name + ", i64 0, i64 0))";
 }
+
+void IOPutStr::generateMIPS() {
+    Instruction::generateMIPS();
+    // 首先我们需要将字符串的地址加载到寄存器中
+    // 然后我们使用 syscall 指令输出字符串
+    new LaInstruction(Register::getRegister(RegisterName::$a0),constString->value_name.substr(1));
+    new LiInstruction(Register::getRegister(RegisterName::$v0),4);
+    new SyscallInstruction();
+}
+

@@ -48,9 +48,9 @@ public:
         ifFalseBlock = else_block;
         opValueChain[2] = else_block;
     }
-public:
     BrInstruction(Value* condition, BasicBlock* ifTrueBlock, BasicBlock* ifFalseBlock);
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

@@ -29,6 +29,7 @@ public:
     */
     IcmpInstruction(const string& name, const string& instruction_type, Value* op1, Value* op2);
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

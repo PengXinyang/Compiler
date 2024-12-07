@@ -318,15 +318,6 @@ Value *LLVMGenerate::VarDefIR(TreeNode *AstRoot) {
                 }else if(var_symbol->btype==0 && instanceof<IRChar>(value1->value_type)) {
                     auto* zext_value = new ZextInstruction(IRName::getLocalVariableName(),value1,new IRInt());
                     value1 = zext_value;
-                }else if(instanceof<ConstValue>(value1)) {
-                    if(var_symbol->btype==1 && instanceof<IRInt>(value1->value_type)) {
-                        auto* trunc_value = new TruncInstruction(IRName::getLocalVariableName(),value1,new IRChar());
-                        value1 = trunc_value;
-                    }
-                    else if(var_symbol->btype==0 && instanceof<IRChar>(value1->value_type)) {
-                        auto* zext_value = new ZextInstruction(IRName::getLocalVariableName(),value1,new IRInt());
-                        value1 = zext_value;
-                    }
                 }
                 new StoreInstruction(value1,instruction);
             }
@@ -358,6 +349,8 @@ Value *LLVMGenerate::VarDefIR(TreeNode *AstRoot) {
                     for(int i = 1; i<initString.length()-1; ++i) {
                         value_list.push_back(new ConstValue(new IRChar(), to_string(initString[i])));
                     }
+                    //用字符串初始化需要末尾补一个0
+                    value_list.push_back(new ConstValue(new IRChar(), to_string(0)));
                 }
                 else {
                     //否则，就是常规的数组赋值

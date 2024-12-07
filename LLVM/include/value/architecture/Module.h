@@ -22,12 +22,13 @@ public:
     //添加一个全局符号
     void addGlobalValue(GlobalValue* globalValue);
     //从全局符号获取所有的全局变量
-    vector<GlobalVariable*>& getGlobalValues();
+    vector<GlobalVariable*> getGlobalValues();
     //从全局符号获取所有的函数
-    vector<Function*>& getFunctions();
+    vector<Function*> getFunctions();
     //添加格式字符串
     void addConstantString(ConstString* constantString);
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

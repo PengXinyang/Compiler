@@ -21,6 +21,7 @@ private:
     GenerateIR();
 public:
     static GenerateIR* getInstance();
+    Module* getModule();
     //生成LLVM IR的过程
     void generateLLVMIR();
     //输出LLVM代码

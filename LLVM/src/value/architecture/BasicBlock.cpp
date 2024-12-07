@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "optimize/OptimizerInit.h"
+#include "structure/text/MipsBlock.h"
 #include "type/IRName.h"
 #include "type/irType/IRBlock.h"
 #include "value/architecture/data_structure/Loop.h"
@@ -65,4 +66,11 @@ string BasicBlock::toLLVM() {
         if(i!=size-1) os<<"\n\t";
     }
     return os.str();
+}
+
+void BasicBlock::generateMIPS() {
+    new MipsBlock(value_name);
+    for(const auto instruction : instructions) {
+        instruction->generateMIPS();
+    }
 }

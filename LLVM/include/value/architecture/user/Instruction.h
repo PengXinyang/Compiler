@@ -25,6 +25,7 @@ public:
     }
     Instruction() = default;
     Instruction(IRType* ir_type,const string& name, const string &instructionType);
+    void generateMIPS() override;
 };
 
 

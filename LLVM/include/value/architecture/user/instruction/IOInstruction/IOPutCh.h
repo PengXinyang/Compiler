@@ -10,10 +10,11 @@
 class IOPutCh : public IOInstruction{
 public:
     IOPutCh() = default;
-    IOPutCh(Value* op_value);
+    explicit IOPutCh(Value* op_value);
     //获取putch的定义语句
     static string getIODefine();
     string toLLVM() override;
+    void generateMIPS() override;
 };
 
 

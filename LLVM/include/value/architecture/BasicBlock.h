@@ -51,7 +51,7 @@ public:
     //覆写，基本块应当如何输出
     string toLLVM() override;
     //生成汇编，之后再补
-
+    void generateMIPS() override;
 };
 
 

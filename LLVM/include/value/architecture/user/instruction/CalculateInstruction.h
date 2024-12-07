@@ -24,6 +24,7 @@ public:
     string toLLVM() override;
     //指令里操作数有几个是常数
     [[nodiscard]] int getConstNum() const;
+    void generateMIPS() override;
 };
 
 

@@ -24,6 +24,9 @@ public:
     [[nodiscard]] vector<int>& getInitValues(){
         return initValues;
     }
+    [[nodiscard]] string getInitString() const {
+        return initString;
+    }
     InitVar() = default;
     InitVar(IRType* type, const vector<int>& initValues, const string& initString);
     string toLLVM();

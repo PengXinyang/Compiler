@@ -27,6 +27,9 @@ GenerateIR *GenerateIR::getInstance() {
     }
     return instance;
 }
+Module *GenerateIR::getModule() {
+    return module;
+}
 
 void GenerateIR::printLLVMIR() {
     //实际上就是输出module的toLLVM
