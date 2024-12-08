@@ -431,32 +431,6 @@ void SymbolHandle::SymbolStmt(TreeNode *root) {
                 //否则，本身就是未定义的或者是常量，不应当处理赋值
                 SymbolExp(son_nodes[2],"");
             }
-            //注意：这里给LVal赋值
-            Symbol* symbol = nowSymbolTable->get_symbol_in_all_table(token);
-            if(symbol!=nullptr && is_const_l_val==0) {
-                //TODO:数组标号，然而我这里直接用了vector，担心由于没有开空间导致报错
-                int array_num = lVal.second;
-                if(symbol->is_array) {
-                    //给数组赋值
-                    if(symbol->btype==0) {
-                        int size = static_cast<int> (symbol->array_values.size());
-                        if(array_num>=size) {
-                            symbol->array_values.push_back(exp);
-                        }
-                        else symbol->array_values[array_num] = exp;
-                    }else if(symbol->btype==1) {
-                        int size = static_cast<int> (symbol->array_values.size());
-                        if(array_num>=size) {
-                            symbol->array_values.push_back(exp);
-                        }
-                        else symbol->array_values[array_num] = exp;
-                    }
-                }
-                else if(symbol->is_var) {
-                    //如果只是变量，那就直接赋值
-                    symbol->var_value = exp;
-                }
-            }
         }
     }
     else if(son_nodes[0]->word.word=="<Exp>") {
@@ -627,32 +601,6 @@ void SymbolHandle::SymbolForStmt(TreeNode *root) {
         }else {
             //否则，本身就是非法的，不应当处理赋值
             SymbolExp(son_nodes[2],"");
-        }
-        //注意：这里给LVal赋值,和Stmt中的类似
-        Symbol* symbol = nowSymbolTable->get_symbol_in_all_table(token);
-        if(symbol!=nullptr && is_const_l_val==0) {
-            //TODO:数组标号，然而我这里直接用了vector，担心由于没有开空间导致报错
-            int array_num = lVal.second;
-            if(symbol->is_array) {
-                //给数组赋值
-                if(symbol->btype==0) {
-                    int size = static_cast<int> (symbol->array_values.size());
-                    if(array_num>=size) {
-                        symbol->array_values.push_back(exp);
-                    }
-                    else symbol->array_values[array_num] = exp;
-                }else if(symbol->btype==1) {
-                    int size = static_cast<int> (symbol->array_values.size());
-                    if(array_num>=size) {
-                        symbol->array_values.push_back(exp);
-                    }
-                    else symbol->array_values[array_num] = exp;
-                }
-            }
-            else if(symbol->is_var) {
-                //如果只是变量，那就直接赋值
-                symbol->var_value = exp;
-            }
         }
     }
 }
