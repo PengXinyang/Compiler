@@ -707,11 +707,11 @@ pair<int,int> SymbolHandle::SymbolLVal(TreeNode *root, int* type) {
             if(symbol->btype==0) {
                 //说明是int数组
                 //注意，在函数中，由于数组的定义可以是形参，元素个数默认为0
-                if(symbol->array_values.empty()) {return {-1,exp};}
+                if(symbol->array_values.empty() || exp >= symbol->array_values.size()) {return {-1,exp};}
                 return {symbol->array_values[exp],exp};
             }
             if(symbol->btype==1) {
-                if(symbol->array_values.empty()) {return {-1,exp};}
+                if(symbol->array_values.empty() || exp >= symbol->array_values.size()) {return {-1,exp};}
                 return {symbol->array_values[exp],exp};
             }
         }

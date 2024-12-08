@@ -149,6 +149,7 @@ int SymbolCalculate::calculateNumberOrChar(TreeNode *root) {
         }
         return num;
     }
+    return 0;
 }
 
 // LVal → Ident ['[' Exp ']']
@@ -174,6 +175,14 @@ int SymbolCalculate::calculateLVal(TreeNode *root) {
     if(!symbol->array_values.empty()) {
         int index = args[0];
         return symbol->array_values[index];
+    }
+    //如果是char，可能要根据string读
+    if(symbol->btype == 1) {
+        if(!symbol->const_string.empty()) {
+            int index = args[0];
+            //TODO:处理转义字符
+            return symbol->const_string[index];
+        }
     }
     return 0;
 }

@@ -27,10 +27,11 @@ int main() {
     GenerateIR* generate_ir = GenerateIR::getInstance();
     if(!ErrorPrint::isError) {
         symbol_handle->printSymbol();
-        generate_ir->generateLLVMIR();
-        generate_ir->printLLVMIR();
+        /*generate_ir->generateLLVMIR();
+        generate_ir->printLLVMIR();*/
         MipsGenerate* mips_generate = MipsGenerate::getInstance(generate_ir->getModule());
-        mips_generate->generateMips();
+        //MipsGenerate* mips_generate = MipsGenerate::getInstance(new Module());
+        //mips_generate->generateMips();
         mips_generate->printMips();
     }
     //删除类
