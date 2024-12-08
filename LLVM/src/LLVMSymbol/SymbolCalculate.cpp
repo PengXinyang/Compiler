@@ -123,7 +123,7 @@ int SymbolCalculate::calculatePrimaryExp(TreeNode *root) {
 
 int SymbolCalculate::calculateNumberOrChar(TreeNode *root) {
     if(root->word.word=="<Number>") {
-        return stoi(root->sonNode[0]->word.word);
+        return stoll(root->sonNode[0]->word.word);
     }
     if(root->word.word=="<Character>") {
         int num = root->sonNode[0]->word.word[1];

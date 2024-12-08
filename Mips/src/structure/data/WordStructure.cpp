@@ -16,12 +16,12 @@ string WordStructure::toMips() {
         //没有初始值
         return label + ": .word " + value;
     }
-    int offset = stoi(value) - static_cast<int>(initValues.size());
+    int offset = stoll(value) - static_cast<int>(initValues.size());
     ostringstream oss;
     oss<<label + ": .word ";
     for (int i = 0; i < initValues.size(); i++) {
         oss << initValues[i];
-        if(i+1<stoi(value)) {
+        if(i+1<stoll(value)) {
             oss<<", ";
         }
     }
