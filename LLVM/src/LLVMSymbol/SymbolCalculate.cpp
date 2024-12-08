@@ -123,7 +123,7 @@ int SymbolCalculate::calculatePrimaryExp(TreeNode *root) {
 
 int SymbolCalculate::calculateNumberOrChar(TreeNode *root) {
     if(root->word.word=="<Number>") {
-        return stoll(root->sonNode[0]->word.word);
+        return stoi(root->sonNode[0]->word.word);
     }
     if(root->word.word=="<Character>") {
         int num = root->sonNode[0]->word.word[1];
@@ -157,7 +157,7 @@ int SymbolCalculate::calculateLVal(TreeNode *root) {
     //获取Ident符号，由于是求值，不是定义，所以需要找全局符号表
     Symbol* symbol = LLVMGenerate::getInstance()
     ->getNowSymbolTable()
-    ->get_symbol_in_all_table(root->sonNode[0]->word.word,root->sonNode[0]->word.line_num);
+    ->get_symbol_in_all_table(root->sonNode[0]->word,root->sonNode[0]->word.line_num);
     if(symbol == nullptr) { return 0; }
     vector<int> args;
     for(int i=1;i<root->son_num;++i) {

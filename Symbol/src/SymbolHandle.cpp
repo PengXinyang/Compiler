@@ -753,7 +753,7 @@ int SymbolHandle::SymbolPrimaryExp(TreeNode *root, const string& token) {
 }
 
 int SymbolHandle::SymbolNumber(TreeNode *root) {
-    if(root->word.word=="<Number>") {return stoll(root->sonNode[0]->word.word);}
+    if(root->word.word=="<Number>") {return stoi(root->sonNode[0]->word.word);}
     return root->sonNode[0]->word.word[1];
 }
 

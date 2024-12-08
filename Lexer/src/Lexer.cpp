@@ -35,7 +35,7 @@ string Lexer::getToken() {
 }
 Word Lexer::handleNext() {
 	handle_next();
-	Word word = Word(tokenType, token,lineNum);
+	Word word = Word(tokenType, token,lineNum,i);
 	return word;
 }
 void Lexer::handleSource() {
@@ -388,7 +388,7 @@ int Lexer::handle_next() {//返回类别码
 		else {
 			retract();
 			lexerError();
-			Word word = Word(tokenTypeMap["&&"],"&&",lineNum);
+			Word word = Word(tokenTypeMap["&&"],"&&",lineNum,i);
 			tokenMap[i++] = word;
 		}
 	}
@@ -402,7 +402,7 @@ int Lexer::handle_next() {//返回类别码
 		else {
 			retract();
 			lexerError();
-			Word word = Word(tokenTypeMap["||"],"||",lineNum);
+			Word word = Word(tokenTypeMap["||"],"||",lineNum,i);
 			tokenMap[i++] = word;
 		}
 	}

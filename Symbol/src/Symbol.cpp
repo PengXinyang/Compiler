@@ -170,8 +170,9 @@ Symbol *SymbolTable::get_symbol_in_all_table(const string &token, const string &
     return father_ptr->get_symbol_in_all_table(token);
 }
 
-Symbol *SymbolTable::get_symbol_in_all_table(const string &token, int line_num) {
+Symbol *SymbolTable::get_symbol_in_all_table(const Word& word, int line_num) {
     Symbol* symbol = nullptr;
+    string token = word.word;
     if(is_in_table(token)) {
         //如果在当前的表中，需要判断它的行号有没有超
         symbol =  &symbol_table[token];
@@ -182,7 +183,10 @@ Symbol *SymbolTable::get_symbol_in_all_table(const string &token, int line_num) 
         }
         else if(symbol->lineNum==line_num) {
             //TODO：行号相等，由于存在同一行先使用后定义符号的情况，需要进一步排查。
-            //这个时候，由于
+            //这个时候，由于列号小，说明不应该找局部的符号
+            if(word.pos<symbol->pos) {
+                symbol = nullptr;
+            }
         }
     }
     if(symbol!=nullptr) {
@@ -247,6 +251,7 @@ void SymbolTable::add_var_symbol(const Word& word, const int btype, const int va
     Symbol symbol;
     symbol.token = word.word;
     symbol.lineNum = word.line_num;
+    symbol.pos = word.pos;
     symbol.btype = btype;
     symbol.var_value = var_value;
     symbol.is_const = is_const;
@@ -259,6 +264,7 @@ void SymbolTable::add_func_symbol(const Word& word, const int func_type, const i
     Symbol symbol;
     symbol.token = word.word;
     symbol.lineNum = word.line_num;
+    symbol.pos = word.pos;
     symbol.func_type = func_type;
     symbol.param_num = param_num;
     symbol.param_type = param_type;
@@ -271,6 +277,7 @@ void SymbolTable::add_func_param_symbol(const Word &word, const int btype, const
     Symbol symbol;
     symbol.token = word.word;
     symbol.lineNum = word.line_num;
+    symbol.pos = word.pos;
     symbol.btype = btype;
     symbol.is_array = is_array;
     symbol.is_var = !is_array;//是数组就不是var，是var就不是数组
@@ -283,6 +290,7 @@ void SymbolTable::add_array_symbol(const Word& word, const int btype, const int 
     Symbol symbol;
     symbol.token = word.word;
     symbol.lineNum = word.line_num;
+    symbol.pos = word.pos;
     symbol.dim = dim;
     symbol.btype = btype;
     symbol.is_const = is_const;

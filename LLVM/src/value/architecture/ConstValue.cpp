@@ -6,5 +6,5 @@
 
 ConstValue::ConstValue(IRType* ir_type, const string& num, const bool defined) :Value(ir_type,num){
     this->defined = defined;
-    this->num = stoll(num);
+    this->num = stoi(num);
 }

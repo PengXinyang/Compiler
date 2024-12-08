@@ -39,7 +39,7 @@ Value *LLVMExp::generateAddressLLVM(TreeNode* AstRoot) {
         }
     }
     //获取第一个子节点，LVal的符号Ident
-    Symbol* lval_symbol = now_symbol_table->get_symbol_in_all_table(AstRoot->sonNode[0]->word.word, AstRoot->sonNode[0]->word.line_num);
+    Symbol* lval_symbol = now_symbol_table->get_symbol_in_all_table(AstRoot->sonNode[0]->word, AstRoot->sonNode[0]->word.line_num);
     if(lval_symbol!=nullptr) {
         if(lval_symbol->is_var) {
             //说明是变量
@@ -81,7 +81,7 @@ Value *LLVMExp::generateLValIR(TreeNode *AstRoot) {
         }
     }
     //获取第一个子节点，LVal的符号Ident
-    Symbol* lval_symbol = now_symbol_table->get_symbol_in_all_table(AstRoot->sonNode[0]->word.word, AstRoot->sonNode[0]->word.line_num);
+    Symbol* lval_symbol = now_symbol_table->get_symbol_in_all_table(AstRoot->sonNode[0]->word, AstRoot->sonNode[0]->word.line_num);
     return generateVarValueIR(args, lval_symbol);
 }
 

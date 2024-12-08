@@ -59,6 +59,7 @@ public:
     int table_id{};//符号所在的符号表的id
     string token;//当前单词对应的字符串
     int lineNum{};//当前符号所在的行
+    int pos{};//判断当前符号的列
     int btype = -1;//是什么数据类型，0是int 1是char
     int type = -1;//是什么类型，0是var，1是数组，2是函数
     bool is_const = false;//是不是常量
@@ -115,7 +116,7 @@ public:
     //用于代码生成，所以不用考虑符号不在的情况
     Symbol* get_symbol_in_all_table(const string& token, const string& token_known);
     //有时候，参考单词不容易确定，所以可以根据行号判断。找对应行之前的符号
-    Symbol* get_symbol_in_all_table(const string& token, int line_num);
+    Symbol* get_symbol_in_all_table(const Word& word, int line_num);
     Symbol* get_last_symbol();//获取最后一个符号
     bool is_in_func_table(const string& token);//判断单词是否在符号表中，且是否为函数
     bool is_in_var_table(const string& token);//判断单词是否在符号表中，且是否为变量

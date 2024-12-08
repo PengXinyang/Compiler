@@ -12,12 +12,14 @@ using namespace std;
 struct Word {
     string word;//单词名字
     int line_num;//行号
+    int pos;
     string word_type;//单词类型
-    Word(){word = "", line_num = 0; word_type = "";}
-    Word(string word_type,string word,int lin_num) {
+    Word(){word = "", line_num = 0; word_type = "";pos = -1;}
+    Word(string word_type,string word,int lin_num,int pos) {
         this->word = move(word);
         this->word_type = move(word_type);
         this->line_num = lin_num;
+        this->pos = pos;
     }
 };
 
