@@ -482,7 +482,6 @@ void SymbolHandle::SymbolStmt(TreeNode *root) {
         //也就是说，在return所在的Stmt结点，它没有右侧的兄弟节点
         //注意，应当是沿着函数的Block的最右侧路线走，最后一个Stmt是return
         TreeNode* father = root->father;
-        //TODO:一会儿看一下关于return错误的判断，在文法最后的“特别说明”中
         //注意：函数的声明不是“父符号表最后一个符号”，因为像if, for这些可以产生更多的子符号表
         Symbol* func_symbol = nowSymbolTable->father_ptr->get_symbol_in_all_table(func_token);
         //TODO：注：由于文法要求，必须看最后一句是不是return，所以为了判断方便，我调整在FuncDef部分处理

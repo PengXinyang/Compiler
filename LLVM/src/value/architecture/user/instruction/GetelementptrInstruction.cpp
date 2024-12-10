@@ -58,9 +58,14 @@ void GetelementptrInstruction::generateMIPS() {
     Register* pointer_register = RegisterController::getRegister(opValueChain[0]);
     Register* offset_register = RegisterController::getRegister(opValueChain[1]);
     pointer_register = RegisterTool::loadPointerValue(opValueChain[0],pointer_register,Register::getRegister(RegisterName::$t8));
-    IRType* ir_type = opValueChain[0]->value_type;
+    //value_type一定是指针类型，并且根据调用的方式，一定是int/char/void复合成指针类型
+    //这种方式可以直接获得元素的真正类型，当然是外面套了一层pointer
+    IRType* ir_type = value_type;
     if(instanceof<IRArray>(ir_type)) {
         ir_type = dynamic_cast<IRArray*>(ir_type)->get_element_type();
+    }
+    if(instanceof<IRPointer>(ir_type)) {
+        ir_type = dynamic_cast<IRPointer*>(ir_type)->ir_type();
     }
     offset_register = RegisterTool::loadMemoryOffset(opValueChain[1],rd,Register::getRegister(RegisterName::$t9),pointer_register,offset_register,ir_type);
     //如果之前使用了默认寄存器，则需要重新分配地址，并在寄存器控制器中更新对应的寄存器

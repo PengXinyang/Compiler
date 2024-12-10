@@ -124,7 +124,6 @@ Register *RegisterTool::loadPointerValue(Value *op, Register *reg, Register *reg
 
 Register *RegisterTool::loadMemoryOffset(Value *op, Register *reg, Register *reg_instead, Register *pointerReg, Register *offsetReg,IRType* irType) {
     Register* register_ = offsetReg;
-    //TODO:这里出现严重问题，去掉注释后可以通过竞速testcase4，但是会导致代码生成二wa
     if(instanceof<IRPointer>(irType)) irType=dynamic_cast<IRPointer*>(irType)->ir_type();
     if(instanceof<ConstValue>(op)) {
         //从数组中取值，需要考虑常量是什么类型的
