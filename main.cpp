@@ -21,8 +21,10 @@ int main() {
     //下面是语法分析处理程序
     Parser* parser = Parser::getParserInstance();
     parser->ParserHandle();
+    //下面是符号表分析程序
     SymbolHandle* symbol_handle = SymbolHandle::getSymbolHandleInstance();
     symbol_handle->handleSymbol();
+    //如果有错误，输出错误
     ErrorPrint::printfError();
     GenerateIR* generate_ir = GenerateIR::getInstance();
     if(!ErrorPrint::isError) {

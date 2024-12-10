@@ -6,7 +6,7 @@
 
 #include <sstream>
 
-#include "optimize/OptimizerInit.h"
+#include "optimize/LLVMOptimizerInit.h"
 #include "structure/text/MipsBlock.h"
 #include "type/IRName.h"
 #include "type/irType/IRBlock.h"
@@ -16,7 +16,7 @@
 BasicBlock::BasicBlock(const string& name) :Value(new IRBlock("BasicBlock"),name){
     instructions = vector<Instruction*>();
     is_exist = true;
-    if(!OptimizerInit::isOptimize()) {
+    if(!LLVMOptimizerInit::isOptimize()) {
         IRName::addBasicBlock(this);
     }
 }

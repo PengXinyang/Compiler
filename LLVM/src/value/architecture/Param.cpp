@@ -4,12 +4,12 @@
 
 #include "../../../include/value/architecture/Param.h"
 
-#include "optimize/OptimizerInit.h"
+#include "optimize/LLVMOptimizerInit.h"
 #include "type/IRName.h"
 
 Param::Param(IRType* ir_type, const string& name) :Value(ir_type,name){
     //优化部分
-    if(!OptimizerInit::isOptimize()) {
+    if(!LLVMOptimizerInit::isOptimize()) {
         IRName::addParam(this);
     }
 }

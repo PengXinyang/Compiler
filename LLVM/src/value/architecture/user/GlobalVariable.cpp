@@ -4,7 +4,7 @@
 
 #include "../../../../include/value/architecture/user/GlobalVariable.h"
 
-#include "optimize/OptimizerInit.h"
+#include "optimize/LLVMOptimizerInit.h"
 #include "structure/data/AsciizStructure.h"
 #include "structure/data/ByteStructure.h"
 #include "structure/data/SpaceStructure.h"
@@ -15,7 +15,7 @@
 GlobalVariable::GlobalVariable(IRType* ir_type, const string& name, InitVar* init_var, bool is_const_array):GlobalValue(ir_type,name) {
     initVar = init_var;
     this->is_const_array = is_const_array;
-    if(!OptimizerInit::isOptimize()) {
+    if(!LLVMOptimizerInit::isOptimize()) {
         //如果不需要优化，直接添加
         IRName::addGlobalVariable(this);
     }

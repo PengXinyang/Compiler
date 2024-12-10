@@ -7,7 +7,7 @@
 #include <sstream>
 
 #include "generate/MipsCell.h"
-#include "optimize/OptimizerInit.h"
+#include "optimize/LLVMOptimizerInit.h"
 #include "Register/RegisterController.h"
 #include "Register/RegisterTool.h"
 #include "structure/text/MipsBlock.h"
@@ -19,7 +19,7 @@ Function::Function(const string& name, IRType* returnType):GlobalValue(new IRBlo
     basicBlocks = vector<BasicBlock*>();
     params = vector<Param*>();
     valueRegisterMap = unordered_map<Value*, Register*>();
-    if(!OptimizerInit::isOptimize()) {
+    if(!LLVMOptimizerInit::isOptimize()) {
         IRName::addFunction(this);
     }
 }

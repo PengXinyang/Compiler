@@ -6,7 +6,7 @@
 
 #include <regex>
 
-#include "optimize/OptimizerInit.h"
+#include "optimize/LLVMOptimizerInit.h"
 #include "structure/data/AsciizStructure.h"
 #include "type/IRName.h"
 #include "type/irType/IRArray.h"
@@ -18,7 +18,7 @@ ConstString::ConstString(const string& name, const string& str, const vector<int
             new IRArray(new IRChar(),dims)
         ),name){
     this->str = str;
-    if(!OptimizerInit::isOptimize()) {
+    if(!LLVMOptimizerInit::isOptimize()) {
         IRName::addConstString(this);
     }
 }

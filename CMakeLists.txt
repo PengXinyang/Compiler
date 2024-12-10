@@ -116,8 +116,8 @@ add_executable(Compiler main.cpp
         LLVM/include/type/irType/IRBool.h
         LLVM/src/value/architecture/user/instruction/BrInstruction.cpp
         LLVM/include/value/architecture/user/instruction/BrInstruction.h
-        LLVM/src/optimize/OptimizerInit.cpp
-        LLVM/include/optimize/OptimizerInit.h
+        LLVM/src/optimize/LLVMOptimizerInit.cpp
+        LLVM/include/optimize/LLVMOptimizerInit.h
         LLVM/src/value/architecture/user/instruction/IcmpInstruction.cpp
         LLVM/include/value/architecture/user/instruction/IcmpInstruction.h
         LLVM/src/value/architecture/user/instruction/JumpInstruction.cpp
@@ -178,4 +178,8 @@ add_executable(Compiler main.cpp
         Mips/include/structure/DataSegment.h
         Mips/src/structure/TextSegment.cpp
         Mips/include/structure/TextSegment.h
+        Mips/src/optimize/MipsOptimizerInit.cpp
+        Mips/include/optimize/MipsOptimizerInit.h
+        Config/src/ConfigOptimizer.cpp
+        Config/include/ConfigOptimizer.h
 )

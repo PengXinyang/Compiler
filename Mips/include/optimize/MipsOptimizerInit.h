@@ -1,18 +1,18 @@
 //
-// Created by PengXinyang on 24-11-28.
+// Created by PengXinyang on 24-12-10.
 //
 
-#ifndef OPTIMIZERINIT_H
-#define OPTIMIZERINIT_H
+#ifndef MIPSOPTIMIZEINIT_H
+#define MIPSOPTIMIZEINIT_H
 
 
-// 决定是否优化的类
-class OptimizerInit {
+
+class MipsOptimizerInit {
 private:
     static bool is_optimize;//表示是否优化
 public:
-    OptimizerInit();
-    ~OptimizerInit();
+    MipsOptimizerInit();
+    ~MipsOptimizerInit();
     static bool isOptimize() {
         return is_optimize;
     }
@@ -23,4 +23,4 @@ public:
 
 
 
-#endif //OPTIMIZERINIT_H
+#endif //MIPSOPTIMIZEINIT_H

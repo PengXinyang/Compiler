@@ -4,13 +4,13 @@
 
 #include "../../../../include/value/architecture/user/Instruction.h"
 
-#include "optimize/OptimizerInit.h"
+#include "optimize/LLVMOptimizerInit.h"
 #include "structure/text/MipsInstruction/Annotation.h"
 #include "type/IRName.h"
 
 Instruction::Instruction(IRType* ir_type, const string& name, const string &instructionType):User(ir_type,name) {
     this->instructionType = instructionType;
-    if(!OptimizerInit::isOptimize()) {
+    if(!LLVMOptimizerInit::isOptimize()) {
         IRName::addInstruction(this);
     }
 }
