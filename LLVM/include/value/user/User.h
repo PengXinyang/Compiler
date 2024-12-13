@@ -18,7 +18,7 @@ public:
     }
     User() = default;
     User(IRType* type, const string &user_name);
-    void addOpValue(Value* op_value);//添加一个操作数Value
+    void addOpValue(Value* op_value, int cnt = 1);//添加一个操作数Value
     void replaceValue(Value* old_value,Value* new_value);//替换一个操作数
     void dropOpValue();//删除所有该User中的该操作数
 };

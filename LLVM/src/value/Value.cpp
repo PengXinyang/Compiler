@@ -6,6 +6,8 @@
 
 #include <algorithm>
 
+#include "value/user/User.h"
+
 Value::Value(IRType* type, const string &name, const vector<Use*> &useChain) {
     value_type = type;
     value_name = name;
@@ -50,5 +52,8 @@ vector<User *> Value::getAllUser() const {
 }
 
 void Value::replaceAllUser(Value *value) {
-
+    for(const auto use:useChain) {
+        User *user = use->getUser();
+        user->replaceValue(this,value);
+    }
 }

@@ -4,6 +4,8 @@
 
 #include "../../../include/value/architecture/Module.h"
 
+#include <fstream>
+#include <iostream>
 #include <sstream>
 
 #include "instanceof.h"
@@ -20,32 +22,26 @@
 #include "value/architecture/user/instruction/IOInstruction/IOPutStr.h"
 
 Module::Module() :Value(new IRBlock("module"),"main_module"){
-    globalValues = vector<GlobalValue*>();
+    functions = vector<Function*>();
+    globalVariables = vector<GlobalVariable*>();
     constantStrings = vector<ConstString*>();
 }
 void Module::addGlobalValue(GlobalValue *globalValue) {
-    globalValues.push_back(globalValue);
+    if(instanceof<Function>(globalValue)) {
+        auto* f = dynamic_cast<Function*>(globalValue);
+        functions.push_back(f);
+    }
+    else if(instanceof<GlobalVariable>(globalValue)) {
+        auto* g = dynamic_cast<GlobalVariable*>(globalValue);
+        globalVariables.push_back(g);
+    }
 }
 
-vector<GlobalVariable *> Module::getGlobalValues() {
-    vector<GlobalVariable *> global_variables = vector<GlobalVariable *>();
-    for (auto global_value : globalValues) {
-        //TODO: 需要检查这个instanceof是否可以正常使用
-        if(instanceof<GlobalVariable>(global_value)) {
-            global_variables.push_back(dynamic_cast<GlobalVariable *>(global_value));
-        }
-    }
-    return global_variables;
+vector<GlobalVariable *>& Module::getGlobalValues() {
+    return globalVariables;
 }
 
-vector<Function *> Module::getFunctions() {
-    auto functions = vector<Function *>();
-    for (auto global_value : globalValues) {
-        //TODO: 需要检查这个instanceof是否可以正常使用
-        if(instanceof<Function>(global_value)) {
-            functions.push_back(dynamic_cast<Function *>(global_value));
-        }
-    }
+vector<Function *>& Module::getFunctions() {
     return functions;
 }
 
@@ -67,8 +63,11 @@ string Module::toLLVM() {
     }
     os<<"\n";
     //最后，添加全局符号语句，包括全局变量和函数，理论上是按照出现的先后顺序
-    for(const auto global_value : globalValues) {
+    for(const auto global_value : globalVariables) {
         os << global_value->toLLVM() << "\n";
+    }
+    for(const auto functon : functions) {
+        os << functon->toLLVM() << "\n";
     }
     return os.str();
 }
@@ -90,4 +89,43 @@ void Module::generateMIPS() {
     new MipsBlock("end");
     new LiInstruction(Register::getRegister(RegisterName::$v0),10);
     new SyscallInstruction();
+}
+
+void Module::buildCfgGraph() {
+    for(const auto function : functions) {
+        function->buildCfgGraph();
+    }
+}
+
+void Module::printCFG() {
+    const string filename = "cfg_debug.txt";
+    ofstream file(filename,ios::out);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+    file<<"控制流图如下"<<"\n\t";
+    for(const auto function : functions) {
+        file<<function->getCfgGraph()->printCFG()<<"\n\t";
+    }
+}
+
+void Module::generateDominantTree() {
+    for(const auto function : functions) {
+        function->buildDominantTree();
+    }
+}
+
+void Module::printDominantTree() {
+    const string filename = "dominant_tree_debug.txt";
+    ofstream file(filename,ios::out);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+    file<<"支配树如下"<<"\n\t";
+    for(const auto function : functions) {
+        file<<"函数: "<<function->value_name<<"\n\t\t";
+        file<<function->getDominantTree()->printDominantTree()<<"\n\t";
+    }
 }

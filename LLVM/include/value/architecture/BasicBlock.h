@@ -32,8 +32,14 @@ public:
     [[nodiscard]] Instruction* getLastInstruction() const {
         return instructions.back();
     }
+    //获取倒数第二条指令
+    [[nodiscard]] Instruction* getPenuInstruction() const {
+        return instructions[instructions.size()-2];
+    }
     //设置指令集
     void setInstructions(const vector<Instruction*>& instructions);
+    //获取指令集
+    vector<Instruction*>& getInstructions();
     //设置exist状态
     void setExist(bool exist);
     //获取exist状态
@@ -52,6 +58,20 @@ public:
     string toLLVM() override;
     //生成汇编，之后再补
     void generateMIPS() override;
+
+    //------------------以下用于代码优化-----------------//
+    //获取该基本块的前序基本块
+    vector<BasicBlock*>& getInBlocks();
+    //获取该基本块的后序基本块
+    vector<BasicBlock*>& getOutBlocks();
+    //获取支配集合
+    vector<BasicBlock*>& getDominateBlocks();
+    //获取支配边
+    vector<BasicBlock*>& getDominateEdge();
+    //获取支配父节点
+    BasicBlock* getParentDominateBlock();
+    //获取支配子节点
+    vector<BasicBlock*>& getChildDominateBlocks();
 };
 
 

@@ -31,7 +31,7 @@ public:
         opValueChain[0] = condition;
     }
 
-    [[nodiscard]] BasicBlock * getifTrueBlock() const {
+    [[nodiscard]] BasicBlock * getIfTrueBlock() const {
         return ifTrueBlock;
     }
 

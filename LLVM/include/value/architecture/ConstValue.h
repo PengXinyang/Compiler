@@ -9,10 +9,10 @@
 //常量类型，注意，对于常量，不能调用函数，只能调用常数和其它常量
 class ConstValue :public Value{
 private:
-    int num = 0;//常量的值，无论是int还是char类型
+    long long num = 0;//常量的值，无论是int还是char类型
     bool defined = true;//该常量是否被定义；如果没有定义则应当赋值成0
 public:
-    [[nodiscard]] int getNum() const {
+    [[nodiscard]] long long getNum() const {
         return num;
     }
     [[nodiscard]] bool isDefined() const {

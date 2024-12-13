@@ -8,6 +8,7 @@
 
 #include "generate/MipsCell.h"
 #include "optimize/LLVMOptimizerInit.h"
+#include "optimize/data_structure/DominantTree.h"
 #include "Register/RegisterController.h"
 #include "Register/RegisterTool.h"
 #include "structure/text/MipsBlock.h"
@@ -22,6 +23,9 @@ Function::Function(const string& name, IRType* returnType):GlobalValue(new IRBlo
     if(!LLVMOptimizerInit::isOptimize()) {
         IRName::addFunction(this);
     }
+    //开启优化，添加控制流图
+    cfgGraph = new CfgGraph(this);
+    dominantTree = new DominantTree(this);
 }
 
 void Function::addParam(Param *param) {
@@ -84,5 +88,30 @@ void Function::generateMIPS() {
     }
     for(const auto basicBlock:basicBlocks) {
         basicBlock->generateMIPS();
+    }
+}
+
+void Function::buildCfgGraph() const {
+    if(cfgGraph) {
+        cfgGraph->buildCFG();
+    }
+}
+
+CfgGraph *Function::getCfgGraph() const {
+    return cfgGraph;
+}
+
+DominantTree *Function::getDominantTree() const {
+    return dominantTree;
+}
+
+void Function::buildDominantTree() const {
+    if(dominantTree) {
+        //生成支配集
+        dominantTree->generateDominateBlocks();
+        //生成支配树
+        dominantTree->generateDominantTree();
+        //生成支配边界
+        dominantTree->generateDominateEdge();
     }
 }

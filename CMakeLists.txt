@@ -182,4 +182,18 @@ add_executable(Compiler main.cpp
         Mips/include/optimize/MipsOptimizerInit.h
         Config/src/ConfigOptimizer.cpp
         Config/include/ConfigOptimizer.h
+        LLVM/src/optimize/MemToReg.cpp
+        LLVM/include/optimize/MemToReg.h
+        LLVM/src/value/architecture/user/instruction/PhiInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/PhiInstruction.h
+        LLVM/src/optimize/Tool/ConstFold.cpp
+        LLVM/include/optimize/Tool/ConstFold.h
+        LLVM/src/OptimizeIR.cpp
+        LLVM/include/OptimizeIR.h
+        LLVM/src/optimize/GVN.cpp
+        LLVM/include/optimize/GVN.h
+        LLVM/src/optimize/data_structure/CfgGraph.cpp
+        LLVM/include/optimize/data_structure/CfgGraph.h
+        LLVM/src/optimize/data_structure/DominantTree.cpp
+        LLVM/include/optimize/data_structure/DominantTree.h
 )

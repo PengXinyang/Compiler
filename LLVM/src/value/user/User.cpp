@@ -10,10 +10,12 @@ User::User(IRType* type, const string &user_name) :Value(type,user_name){
     opValueChain = vector<Value*>();
 }
 
-void User::addOpValue(Value *op_value) {
-    opValueChain.push_back(op_value);
-    if(op_value) {
-        op_value->addUser(this);
+void User::addOpValue(Value *op_value, const int cnt) {
+    for (int i = 0; i < cnt; i++) {
+        opValueChain.push_back(op_value);
+        if(op_value) {
+            op_value->addUser(this);
+        }
     }
 }
 

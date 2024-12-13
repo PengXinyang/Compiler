@@ -1213,6 +1213,14 @@ void LLVMGenerate::quitNowSymbolTable() {
 
 void LLVMGenerate::changeType(Value **value1, Value **value2) {
     //在参与加减乘除运算时，char要全部转成int
+    //如果有常数，则直接修改类型即可
+    //下面变常数属于优化部分
+    if(instanceof<ConstValue>(*value1) && instanceof<IRChar>((*value1)->value_type)) {
+        (*value1)->value_type = new IRInt();
+    }
+    if(instanceof<ConstValue>(*value2) && instanceof<IRChar>((*value2)->value_type)) {
+        (*value2)->value_type = new IRInt();
+    }
     if(!instanceof<IRInt>((*value1)->value_type)) {
         //说明第一个ans需要强制转换
         Value* zext_ans = new ZextInstruction(

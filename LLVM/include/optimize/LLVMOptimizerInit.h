@@ -10,15 +10,14 @@
 class LLVMOptimizerInit {
 private:
     static bool is_optimize;//表示是否优化
+    static bool is_const_fold;//是否常量折叠
 public:
     LLVMOptimizerInit();
     ~LLVMOptimizerInit();
-    static bool isOptimize() {
-        return is_optimize;
-    }
-    static void setIsOptimize(bool optimize) {
-        is_optimize = optimize;
-    }
+    static bool isOptimize();
+    static void setIsOptimize(bool optimize);
+    static bool isConstFold();
+    static void setIsConstFold(bool constFold);
 };
 
 

@@ -4,14 +4,23 @@
 
 #include "GenerateIR.h"
 #include "MipsGenerate.h"
+#include "OptimizeIR.h"
+#include "Config/include/ConfigOptimizer.h"
 #include "ErrorHandle/include/ErrorPrint.h"
 #include "Lexer/include/TokenType.h"
+#include "optimize/LLVMOptimizerInit.h"
 #include "Parser/include/Parser.h"
 #include "Symbol/include/SymbolHandle.h"
 using namespace std;
 string source;
 
 int main() {
+    //优化开关
+    ConfigOptimizer::setConfigOptimize(true);
+    ConfigOptimizer::initConfigOptimizer();
+    LLVMOptimizerInit::setIsOptimize(false);
+    LLVMOptimizerInit::setIsConstFold(true);
+
     source = FileProcess::readFileIntoString("testfile.txt");
     //下面是词法分析处理程序
     TokenType* tokenTypeMain = TokenType::getTokenTypeInstance();
@@ -30,6 +39,11 @@ int main() {
     if(!ErrorPrint::isError) {
         symbol_handle->printSymbol();
         generate_ir->generateLLVMIR();
+        if(ConfigOptimizer::isConfigOptimize()) {
+            //执行优化
+            OptimizeIR* optimize_ir = OptimizeIR::getInstance();
+            optimize_ir->runOptimizeIR();
+        }
         generate_ir->printLLVMIR();
         MipsGenerate* mips_generate = MipsGenerate::getInstance(generate_ir->getModule());
         //MipsGenerate* mips_generate = MipsGenerate::getInstance(new Module());

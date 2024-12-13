@@ -47,6 +47,11 @@ void BasicBlock::addInstruction(Instruction *instruction, int index) {
 void BasicBlock::setInstructions(const vector<Instruction *> &instructions) {
     this->instructions = instructions;
 }
+
+vector<Instruction *>& BasicBlock::getInstructions() {
+    return instructions;
+}
+
 Function *BasicBlock::getFunctionParent() const {
     return functionParent;
 }
@@ -73,4 +78,27 @@ void BasicBlock::generateMIPS() {
     for(const auto instruction : instructions) {
         instruction->generateMIPS();
     }
+}
+
+//------------------以下用于代码优化-----------------//
+vector<BasicBlock *> &BasicBlock::getInBlocks() {
+    return functionParent->getCfgGraph()->getInBlocks()[this];
+}
+
+vector<BasicBlock *> &BasicBlock::getOutBlocks() {
+    return functionParent->getCfgGraph()->getOutBlocks()[this];
+}
+
+vector<BasicBlock *> &BasicBlock::getDominateBlocks() {
+    return functionParent->getDominantTree()->getDominateBlocks()[this];
+}
+
+vector<BasicBlock *> &BasicBlock::getDominateEdge() {
+    return functionParent->getDominantTree()->getDominateEdge()[this];
+}
+BasicBlock *BasicBlock::getParentDominateBlock() {
+    return functionParent->getDominantTree()->getParentBlock()[this];
+}
+vector<BasicBlock *> &BasicBlock::getChildDominateBlocks() {
+    return functionParent->getDominantTree()->getChildBlock()[this];
 }

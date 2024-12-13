@@ -9,6 +9,7 @@
 #include "../type/IRType.h"
 #include "./user/Use.h"
 #include "instanceof.h"
+#include <algorithm>
 
 //防止循环依赖
 class Use;
