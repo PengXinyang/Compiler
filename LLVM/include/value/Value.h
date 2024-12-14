@@ -61,6 +61,10 @@ public:
     void virtual generateMIPS(){}
     //保留toLLVM的方法，生成中间代码字符串
     string virtual toLLVM() { return ""; }
+
+    //---------------以下是代码优化部分--------------//
+    //插入phi指令
+    virtual void insertPhiInstruction(){}
 };
 
 

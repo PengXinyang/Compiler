@@ -5,6 +5,7 @@
 #include "../../../../include/value/architecture/user/Instruction.h"
 
 #include "optimize/LLVMOptimizerInit.h"
+#include "optimize/MemToReg.h"
 #include "structure/text/MipsInstruction/Annotation.h"
 #include "type/IRName.h"
 
@@ -18,4 +19,9 @@ Instruction::Instruction(IRType* ir_type, const string& name, const string &inst
 void Instruction::generateMIPS() {
     //将指令作为注释生成
     new Annotation(toLLVM());
+}
+
+void Instruction::insertPhiInstruction() {
+    MemToReg::resetByInstruction(this);
+    MemToReg::insertPhiInstruction();
 }

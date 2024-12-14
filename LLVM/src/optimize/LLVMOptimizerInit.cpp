@@ -19,3 +19,11 @@ bool LLVMOptimizerInit::isConstFold() {
 void LLVMOptimizerInit::setIsConstFold(bool constFold) {
     is_const_fold = constFold;
 }
+
+void LLVMOptimizerInit::init(Module *module) {
+    module->DCEBlock();
+    module->buildCfgGraph();
+    module->printCFG();
+    module->generateDominantTree();
+    module->printDominantTree();
+}

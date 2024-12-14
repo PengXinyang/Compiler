@@ -7,11 +7,16 @@
 #include <sstream>
 
 #include "optimize/LLVMOptimizerInit.h"
+#include "optimize/MemToReg.h"
+#include "optimize/Tool/DCE.h"
 #include "structure/text/MipsBlock.h"
 #include "type/IRName.h"
 #include "type/irType/IRBlock.h"
+#include "type/irType/IRChar.h"
+#include "type/irType/IRInt.h"
 #include "value/architecture/data_structure/Loop.h"
 #include "value/architecture/user/Instruction.h"
+#include "value/architecture/user/instruction/AllocaInstruction.h"
 
 BasicBlock::BasicBlock(const string& name) :Value(new IRBlock("BasicBlock"),name){
     instructions = vector<Instruction*>();
@@ -81,6 +86,10 @@ void BasicBlock::generateMIPS() {
 }
 
 //------------------以下用于代码优化-----------------//
+void BasicBlock::DCEBlockInstruction() {
+    DCE::deleteBranchInstruction(this);
+}
+
 vector<BasicBlock *> &BasicBlock::getInBlocks() {
     return functionParent->getCfgGraph()->getInBlocks()[this];
 }
@@ -101,4 +110,21 @@ BasicBlock *BasicBlock::getParentDominateBlock() {
 }
 vector<BasicBlock *> &BasicBlock::getChildDominateBlocks() {
     return functionParent->getDominantTree()->getChildBlock()[this];
+}
+
+void BasicBlock::insertPhiInstruction() {
+    auto new_instructions = vector(instructions);
+    for(auto instruction : new_instructions) {
+        if(instanceof<AllocaInstruction>(instruction)) {
+            auto* alloca = dynamic_cast<AllocaInstruction*>(instruction);
+            if(instanceof<IRPointer>(alloca->value_type)) {
+                IRType* ir_type = dynamic_cast<IRPointer*>(alloca->value_type)->ir_type();
+                if(instanceof<IRInt>(ir_type) || instanceof<IRChar>(ir_type)) {
+                    //说明这个alloca分配的是int或char类型，要改为phi指令
+                    instruction->insertPhiInstruction();
+                    MemToReg::renameVar();
+                }
+            }
+        }
+    }
 }

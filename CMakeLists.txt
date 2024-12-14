@@ -196,4 +196,6 @@ add_executable(Compiler main.cpp
         LLVM/include/optimize/data_structure/CfgGraph.h
         LLVM/src/optimize/data_structure/DominantTree.cpp
         LLVM/include/optimize/data_structure/DominantTree.h
+        LLVM/src/optimize/Tool/DCE.cpp
+        LLVM/include/optimize/Tool/DCE.h
 )

@@ -15,7 +15,7 @@ private:
     vector<BasicBlock*> preBlocks;//数据流分析中的前序基本块集合
 public:
     PhiInstruction() = default;
-    //由于phi函数可能是i32或者i38，所以需要传type
+    //由于phi函数可能是i32或者i8，所以需要传type
     PhiInstruction(IRType* ir_type, const string& name,const vector<BasicBlock*>&preBlocks, int cnt = -1);
     vector<BasicBlock*> getPreBlocks();
     string toLLVM() override;

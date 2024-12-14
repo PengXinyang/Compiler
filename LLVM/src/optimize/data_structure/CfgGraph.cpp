@@ -25,7 +25,7 @@ void CfgGraph::buildCFG() {
         Instruction* penu_instruction = block->getPenuInstruction();
         //看最后一条指令是不是跳转，只有跳转是区分基本块的标准
         //并且跳转的语句前一句不能是return指令，否则到不了跳转指令，自然也到不了跳转的基本块
-        if(instanceof<JumpInstruction>(last_instruction) && !instanceof<ReturnInstruction>(penu_instruction)) {
+        if(instanceof<JumpInstruction>(last_instruction) && (!penu_instruction || !instanceof<ReturnInstruction>(penu_instruction))) {
             //直接跳转指令
             addEdge(block,
                 dynamic_cast<JumpInstruction*>(last_instruction)->getDestination());

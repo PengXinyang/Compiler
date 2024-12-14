@@ -29,11 +29,11 @@ string PhiInstruction::toLLVM() {
     * 示例：
     * %7 = phi i32 [1, %3], [%5, %4]
     */
-    ss<<value_name<<" = "<<instructionType<<" "<<value_type<<" ";
+    ss<<value_name<<" = "<<instructionType<<" "<<value_type->toLLVM()<<" ";
     const int size = static_cast<int>(preBlocks.size());
     for(int i=0;i<size;i++) {
         if(opValueChain[i]&&preBlocks[i]) {
-            ss<<"["<<opValueChain[i]<<", %"<<preBlocks[i]->value_name<<"]";
+            ss<<"["<<opValueChain[i]->value_name<<", %"<<preBlocks[i]->value_name<<"]";
         }
         if(i+1<size) {
             ss<<", ";
@@ -46,6 +46,8 @@ void PhiInstruction::changeValue(Value *value, BasicBlock *basic_block) {
     const auto it = find(preBlocks.begin(),preBlocks.end(),basic_block);
     const int index = it - preBlocks.begin();
     opValueChain[index] = value;
+    //存在i8的可能性，所以添加值的时候就需要重新确定值的属性
+    value_type = value->value_type;
     //由于初始化时，添加了null，现在需要将这个value和phi绑定
     value->addUser(this);
 }

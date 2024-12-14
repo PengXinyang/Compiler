@@ -34,6 +34,7 @@ public:
     }
     //获取倒数第二条指令
     [[nodiscard]] Instruction* getPenuInstruction() const {
+        if(instructions.size()<=1) return nullptr;
         return instructions[instructions.size()-2];
     }
     //设置指令集
@@ -60,6 +61,8 @@ public:
     void generateMIPS() override;
 
     //------------------以下用于代码优化-----------------//
+    //删除无用代码
+    void DCEBlockInstruction();
     //获取该基本块的前序基本块
     vector<BasicBlock*>& getInBlocks();
     //获取该基本块的后序基本块
@@ -72,6 +75,8 @@ public:
     BasicBlock* getParentDominateBlock();
     //获取支配子节点
     vector<BasicBlock*>& getChildDominateBlocks();
+
+    void insertPhiInstruction() override;
 };
 
 

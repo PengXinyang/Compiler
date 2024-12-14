@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include "instanceof.h"
+#include "optimize/Tool/DCE.h"
 #include "structure/text/MipsBlock.h"
 #include "structure/text/MipsInstruction/JalInstruction.h"
 #include "structure/text/MipsInstruction/JInstruction.h"
@@ -89,6 +90,16 @@ void Module::generateMIPS() {
     new MipsBlock("end");
     new LiInstruction(Register::getRegister(RegisterName::$v0),10);
     new SyscallInstruction();
+}
+void Module::DCEBlock() {
+    //首先删除无用的指令
+    for(const auto function:functions) {
+        function->DCEBlockInstruction();
+    }
+    //然后删除无用的基本块
+    for(const auto function:functions) {
+        DCE::deleteBlock(function);
+    }
 }
 
 void Module::buildCfgGraph() {

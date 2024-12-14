@@ -103,6 +103,8 @@ void DominantTree::generateDominateEdge() {
             BasicBlock* x = entryBlock;
             //我们现在需要找一个条件，判断x不严格支配b
             //说白了就两种可能性：要么x和b相等，要么x不支配b(x的支配集不存在b)
+            //TODO:出现严重问题：可能支配树出现了环?
+            //20和28号基本块成环
             while(x!=nullptr && (x == dominate_Block ||
                 count(x->getDominateBlocks().begin(), x->getDominateBlocks().end(), dominate_Block) == 0)) {
                 //将b纳入

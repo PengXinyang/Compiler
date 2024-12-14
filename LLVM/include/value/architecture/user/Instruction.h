@@ -26,6 +26,9 @@ public:
     Instruction() = default;
     Instruction(IRType* ir_type,const string& name, const string &instructionType);
     void generateMIPS() override;
+
+    //-----------------------以下是代码优化部分---------------------//
+    void insertPhiInstruction() override;
 };
 
 

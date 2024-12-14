@@ -8,8 +8,10 @@
 #include <iostream>
 #include<regex>
 
+#include "../../Config/include/ConfigOptimizer.h"
 #include "../../Parser/include/Parser.h"
 #include "generate/LLVMGenerate.h"
+#include "optimize/LLVMOptimizerInit.h"
 #include "type/IRName.h"
 
 LLVMGenerate* GenerateIR::generate = nullptr;
@@ -46,7 +48,9 @@ void GenerateIR::printLLVMIR() {
 }
 
 void GenerateIR::generateLLVMIR() {
+    LLVMOptimizerInit::setIsOptimize(false);
     generate->generateLLVMIR(root);
+    LLVMOptimizerInit::setIsOptimize(true);
 }
 
 void GenerateIR::traverseTreeIR(TreeNode *root) {

@@ -32,6 +32,8 @@ public:
     void generateMIPS() override;
 
     //-------------------------以下用于代码优化----------------------//
+    //删除每个函数基本块内无用的代码和块
+    void DCEBlock();
     //构建控制流图
     void buildCfgGraph();
     //Debug用，输出控制流图

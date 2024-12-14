@@ -4,6 +4,7 @@
 
 #ifndef OPTIMIZERINIT_H
 #define OPTIMIZERINIT_H
+#include "value/architecture/Module.h"
 
 
 // 决定是否优化的类
@@ -18,6 +19,7 @@ public:
     static void setIsOptimize(bool optimize);
     static bool isConstFold();
     static void setIsConstFold(bool constFold);
+    static void init(Module* module);
 };
 
 

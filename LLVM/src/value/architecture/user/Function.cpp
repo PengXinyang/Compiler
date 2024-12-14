@@ -8,6 +8,7 @@
 
 #include "generate/MipsCell.h"
 #include "optimize/LLVMOptimizerInit.h"
+#include "optimize/MemToReg.h"
 #include "optimize/data_structure/DominantTree.h"
 #include "Register/RegisterController.h"
 #include "Register/RegisterTool.h"
@@ -90,6 +91,11 @@ void Function::generateMIPS() {
         basicBlock->generateMIPS();
     }
 }
+void Function::DCEBlockInstruction() {
+    for(const auto basicBlock:basicBlocks) {
+        basicBlock->DCEBlockInstruction();
+    }
+}
 
 void Function::buildCfgGraph() const {
     if(cfgGraph) {
@@ -113,5 +119,14 @@ void Function::buildDominantTree() const {
         dominantTree->generateDominantTree();
         //生成支配边界
         dominantTree->generateDominateEdge();
+    }
+}
+
+void Function::insertPhiInstruction() {
+    //首先，设置起始基本块为函数的第一个基本块
+    MemToReg::setFirstBlock(basicBlocks[0]);
+    //遍历所有基本块，插入phi函数
+    for(const auto basicBlock:basicBlocks) {
+        basicBlock->insertPhiInstruction();
     }
 }

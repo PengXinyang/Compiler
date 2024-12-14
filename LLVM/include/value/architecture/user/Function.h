@@ -47,6 +47,12 @@ public:
     void addBasicBlock(BasicBlock *basicBlock,int index = -1);
     string toLLVM() override;
     void generateMIPS() override;
+
+    //---------------------以下是代码优化部分--------------------------//
+    /**
+    * 删除无用的代码
+    */
+    void DCEBlockInstruction();
     /**
     * 生成控制流图
     */
@@ -63,6 +69,11 @@ public:
     * 构建支配树中的支配集，支配树，支配边界等
     */
     void buildDominantTree() const;
+
+    /**
+    * 插入phi指令
+    */
+    void insertPhiInstruction() override;
 };
 
 

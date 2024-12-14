@@ -7,6 +7,7 @@
 #include "GenerateIR.h"
 #include "optimize/GVN.h"
 #include "optimize/LLVMOptimizerInit.h"
+#include "optimize/MemToReg.h"
 OptimizeIR* OptimizeIR::instance;
 OptimizeIR::OptimizeIR() {
     module = GenerateIR::getInstance()->getModule();
@@ -19,12 +20,9 @@ OptimizeIR* OptimizeIR::getInstance() {
 }
 
 void OptimizeIR::runOptimizeIR() {
-    module->buildCfgGraph();
-    module->printCFG();
-    module->generateDominantTree();
-    module->printDominantTree();
+    MemToReg::Mem2Reg(module);
     if(LLVMOptimizerInit::isConstFold()) {
         //说明要运行常量折叠
-        GVN::runConstFold(module);
+        //GVN::runConstFold(module);
     }
 }
