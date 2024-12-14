@@ -23,6 +23,6 @@ void OptimizeIR::runOptimizeIR() {
     MemToReg::Mem2Reg(module);
     if(LLVMOptimizerInit::isConstFold()) {
         //说明要运行常量折叠
-        //GVN::runConstFold(module);
+        GVN::runConstFold(module);
     }
 }

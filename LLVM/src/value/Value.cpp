@@ -45,6 +45,7 @@ void Value::replaceUser(Value *oldValue, Value *newValue, User *user) {
 
 vector<User *> Value::getAllUser() const {
     vector<User *> users;
+    users.reserve(useChain.size());
     for(const auto & it : useChain) {
         users.push_back(it->getUser());
     }
@@ -52,7 +53,9 @@ vector<User *> Value::getAllUser() const {
 }
 
 void Value::replaceAllUser(Value *value) {
-    for(const auto use:useChain) {
+    //防止删除导致循环发生变化
+    const vector<Use*> copy_use_chain = vector(useChain);
+    for(const auto use:copy_use_chain) {
         User *user = use->getUser();
         user->replaceValue(this,value);
     }

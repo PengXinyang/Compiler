@@ -56,6 +56,11 @@ public:
     //获取使用这个Value的全部User
     [[nodiscard]] vector<User*> getAllUser() const;
     //将所有的使用本Value的使用者全部替换为使用新的Value
+    /**
+    * 注意：存在严重问题：如果直接访问opValueChain, 那么在移出元素后会让迭代器指的位置出现问题
+    * 所以遍历应当单独生成一个副本，防止迭代器出现偏移
+    * @param value
+    */
     void replaceAllUser(Value* value);
     //生成汇编的函数，具体到不同的类再具体重写
     void virtual generateMIPS(){}

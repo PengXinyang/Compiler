@@ -38,7 +38,7 @@ void User::replaceValue(Value *old_value, Value *new_value) {
 
 void User::dropOpValue() {
     for(Value* op_value : opValueChain) {
-        vector<Use*> op_use_chain = op_value->getUseChain();
+        vector<Use*>& op_use_chain = op_value->getUseChain();
         auto it = remove_if(op_use_chain.begin(), op_use_chain.end(),
             [this](const Use* use) {
                 return use->getUser() == this;

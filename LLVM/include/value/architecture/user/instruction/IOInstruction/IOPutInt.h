@@ -10,7 +10,7 @@
 class IOPutInt :public IOInstruction{
 public:
     IOPutInt() = default;
-    IOPutInt(Value* op_value);
+    explicit IOPutInt(Value* op_value);
     //获取putint的定义语句
     static string getIODefine();
     string toLLVM() override;

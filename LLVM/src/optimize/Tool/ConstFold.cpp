@@ -109,10 +109,11 @@ Value *ConstFold::handle2(CalculateInstruction *calculate_instruction) {
     }
     //错误处理，如果op1是0并且涉及除法和取模，那么置为 -1
     if(calculate_instruction->getInstructionType()=="sdiv") {
-        op_value1 = -1;
-        return new ConstValue(new IRInt(), to_string(op_value1/op_value0));
+        if(op_value1==0) op_value1 = -1;
+        return new ConstValue(new IRInt(), to_string(op_value0/op_value1));
     }
     if(calculate_instruction->getInstructionType()=="srem") {
+        if(op_value1==0) op_value1 = -1;
         return new ConstValue(new IRInt(), to_string(op_value0%op_value1));
     }
     if(calculate_instruction->getInstructionType()=="and") {
