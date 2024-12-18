@@ -7,6 +7,9 @@
 #include <algorithm>
 
 #include "value/architecture/BasicBlock.h"
+#include "value/architecture/ConstValue.h"
+#include "value/architecture/Param.h"
+#include "value/architecture/user/GlobalVariable.h"
 
 PhiInstruction::PhiInstruction(IRType* ir_type, const string& name, const vector<BasicBlock *>& preBlocks, int cnt)
     :Instruction(ir_type,name,"phi"){
@@ -50,4 +53,23 @@ void PhiInstruction::changeValue(Value *value, BasicBlock *basic_block) {
     value_type = value->value_type;
     //由于初始化时，添加了null，现在需要将这个value和phi绑定
     value->addUser(this);
+}
+
+void PhiInstruction::ChangePhiToPC(vector<PCInstruction*> &pc_instructions) {
+    for(int i = 0; i < opValueChain.size(); i++) {
+        const auto op = opValueChain[i];
+        //如果op不是常量，就需要记录源寄存器和目标寄存器，为了之后的转move指令
+        if(instanceof<ConstValue>(op) && !dynamic_cast<ConstValue*>(op)->isDefined()) continue;
+        pc_instructions[i]->setSrcDst(op,this);
+    }
+}
+
+void PhiInstruction::addIntoUse() {
+    unordered_set<Value*>& use = getBlockParent()->getUseSet();
+    for(auto op:opValueChain) {
+        if(instanceof<Instruction>(op) || instanceof<GlobalVariable>(op) || instanceof<Param>(op)) {
+            //说明op属于指令/全局变量/参数，应当加入使用链
+            use.insert(op);
+        }
+    }
 }

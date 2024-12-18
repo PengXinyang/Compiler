@@ -26,4 +26,6 @@ void LLVMOptimizerInit::init(Module *module) {
     module->printCFG();
     module->generateDominantTree();
     module->printDominantTree();
+    /*module->activeAnalysis();
+    module->printActiveAnalysis();*/
 }

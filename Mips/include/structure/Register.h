@@ -27,6 +27,16 @@ enum class RegisterName {
     $ra       // 返回地址寄存器
 };
 
+// 加法操作符重载
+inline RegisterName operator+(RegisterName reg, int value) {
+    return static_cast<RegisterName>(static_cast<int>(reg) + value);
+}
+
+// 减法操作符重载
+inline RegisterName operator-(RegisterName reg, int value) {
+    return static_cast<RegisterName>(static_cast<int>(reg) - value);
+}
+
 class Register {
 private:
     RegisterName reg = RegisterName::$zero;

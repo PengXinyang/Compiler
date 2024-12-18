@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include "instanceof.h"
+#include "optimize/Tool/ActiveVarAnalysis.h"
 #include "optimize/Tool/DCE.h"
 #include "structure/text/MipsBlock.h"
 #include "structure/text/MipsInstruction/JalInstruction.h"
@@ -138,5 +139,25 @@ void Module::printDominantTree() {
     for(const auto function : functions) {
         file<<"函数: "<<function->value_name<<"\n\t\t";
         file<<function->getDominantTree()->printDominantTree()<<"\n\t";
+    }
+}
+
+void Module::activeAnalysis() {
+    for(const auto function : functions) {
+        function->activeAnalysis();
+    }
+}
+
+void Module::printActiveAnalysis() {
+    const string filename = "active_analysis_debug.txt";
+    ofstream file(filename,ios::out);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+    file<<"活跃变量分析如下"<<"\n\t";
+    for(const auto function : functions) {
+        file<<"函数: "<<function->value_name<<"\n\t\t";
+        file<<function->getActiveVarAnalysis()->printActiveAnalysis()<<"\n\t";
     }
 }

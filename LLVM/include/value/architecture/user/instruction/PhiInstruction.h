@@ -4,6 +4,7 @@
 
 #ifndef PHIINSTRUCTION_H
 #define PHIINSTRUCTION_H
+#include "DeletePhiInstruction/PCInstruction.h"
 #include "value/architecture/BasicBlock.h"
 #include "value/architecture/user/Instruction.h"
 
@@ -24,6 +25,17 @@ public:
     * 所以需要根据传入的Value，修改使用的数据
     */
     void changeValue(Value* value,BasicBlock* basic_block);
+
+    /**
+    * 消除phi使用，主要是让phi中的源寄存器和目的寄存器整合进PC中
+    * @param pc_instructions
+    */
+    void ChangePhiToPC(vector<PCInstruction*>& pc_instructions);
+
+    /**
+    * 将phi指令的操作数添加到use集合
+    */
+    void addIntoUse();
 };
 
 

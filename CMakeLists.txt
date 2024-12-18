@@ -198,4 +198,16 @@ add_executable(Compiler main.cpp
         LLVM/include/optimize/data_structure/DominantTree.h
         LLVM/src/optimize/Tool/DCE.cpp
         LLVM/include/optimize/Tool/DCE.h
+        LLVM/src/value/architecture/user/instruction/DeletePhiInstruction/PCInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/DeletePhiInstruction/PCInstruction.h
+        LLVM/src/value/architecture/user/instruction/DeletePhiInstruction/PhiMoveInstruction.cpp
+        LLVM/include/value/architecture/user/instruction/DeletePhiInstruction/PhiMoveInstruction.h
+        Mips/src/optimize/deletePhi.cpp
+        Mips/include/optimize/deletePhi.h
+        Mips/src/OptimizeMips.cpp
+        Mips/include/OptimizeMips.h
+        Mips/src/Register/RegisterDistribute.cpp
+        Mips/include/Register/RegisterDistribute.h
+        LLVM/src/optimize/Tool/ActiveVarAnalysis.cpp
+        LLVM/include/optimize/Tool/ActiveVarAnalysis.h
 )

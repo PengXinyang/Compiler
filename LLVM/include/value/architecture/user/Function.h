@@ -17,6 +17,7 @@
 class Param;
 class CfgGraph;
 class DominantTree;
+class ActiveVarAnalysis;
 class Function : public GlobalValue{
 private:
     IRType* returnType = nullptr;//函数的返回类型
@@ -26,6 +27,7 @@ private:
     unordered_map<Value*, Register*> valueRegisterMap;//在函数内部的寄存器和Value的映射表
     CfgGraph* cfgGraph = nullptr;//这个函数对应的控制流图
     DominantTree* dominantTree = nullptr;//这个函数的支配树
+    ActiveVarAnalysis* activeVarAnalysis = nullptr;//活跃变量分析指针
 public:
     Function() = default;
     Function(const string& name, IRType* returnType);
@@ -74,6 +76,29 @@ public:
     * 插入phi指令
     */
     void insertPhiInstruction() override;
+
+    /**
+    * 删除phi指令
+    * 由于这里涉及到函数的基本块的改变，所以需要先复制一个block副本再遍历
+    * 目标：删除phi指令，先转换成PC指令，再转换成move指令
+    */
+    void deletePhiInstruction();
+
+    /**
+    * 进行活跃变量分析
+    */
+    void activeAnalysis();
+
+    /**
+    * 获取活跃变量
+    * @return
+    */
+    ActiveVarAnalysis* getActiveVarAnalysis() const;
+
+    /**
+     * 用于寄存器分配
+     */
+    void registerDistribute();
 };
 
 

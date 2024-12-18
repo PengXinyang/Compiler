@@ -42,6 +42,10 @@ public:
     void generateDominantTree();
     //Debug用，输出支配树
     void printDominantTree();
+    //进行活跃变量分析
+    void activeAnalysis();
+    //Debug用，输出活跃变量
+    void printActiveAnalysis();
 };
 
 

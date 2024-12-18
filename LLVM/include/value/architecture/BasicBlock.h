@@ -4,6 +4,9 @@
 
 #ifndef BASICBLOCK_H
 #define BASICBLOCK_H
+#include <unordered_map>
+#include <unordered_set>
+
 #include "value/Value.h"
 
 class Function;
@@ -75,8 +78,43 @@ public:
     BasicBlock* getParentDominateBlock();
     //获取支配子节点
     vector<BasicBlock*>& getChildDominateBlocks();
+    //获取活跃变量的use集合
+    unordered_set<Value*>& getUseSet();
+    //获取活跃变量的def集合
+    unordered_set<Value*>& getDefSet();
+    //获取活跃变量的in集合
+    unordered_set<Value*>& getInSet();
+    //获取活跃变量的out集合
+    unordered_set<Value*>& getOutSet();
 
     void insertPhiInstruction() override;
+
+    /**
+    * 将每个Block的phi指令转换成PC指令
+    * 根据教程给出的算法
+    * 首先，遍历该基本块的所有前驱，确定Ei=<Bi,B>
+    * 初始化一个空的PCi指令，由于循环，所以采用PC数组记录
+    * 如果Bi有多个出边，那么
+    * 1. 创建新的基本块Bi'
+    * 2. 将边Ei替换为<Bi,Bi'>, <Bi',B>
+    * 具体的表现是，修改Bi的跳转语句，增加Bi'的跳转语句，并且更改控制流图
+    * 3. 将PCi指令插入Bi'中
+    * 否则，如果没有多个出边，直接加在块的最后即可，不需要新建块。
+    * 随后，需要移出phi指令
+    */
+    void PhiToPC();
+
+    /**
+    * 将并行化PC指令改写为串行化Move指令
+    * 这样才可以转换成Mips
+    * 首先，获取基本块需要串行化的PC指令。
+    * 根据上一个函数的措施，如果有PC，一定是倒数第二个指令是PC
+    * 遍历指令
+    * 每次选择目标寄存器未被依赖的pc指令改写为move
+    * 如果存在环
+    * 那么需要选择某个节点拆开，新建寄存器a'
+    */
+    void PCToMove();
 };
 
 

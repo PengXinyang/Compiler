@@ -10,6 +10,7 @@
 #include "optimize/LLVMOptimizerInit.h"
 #include "optimize/MemToReg.h"
 #include "optimize/data_structure/DominantTree.h"
+#include "optimize/Tool/ActiveVarAnalysis.h"
 #include "Register/RegisterController.h"
 #include "Register/RegisterTool.h"
 #include "structure/text/MipsBlock.h"
@@ -27,6 +28,7 @@ Function::Function(const string& name, IRType* returnType):GlobalValue(new IRBlo
     //开启优化，添加控制流图
     cfgGraph = new CfgGraph(this);
     dominantTree = new DominantTree(this);
+    activeVarAnalysis = new ActiveVarAnalysis(this);
 }
 
 void Function::addParam(Param *param) {
@@ -129,4 +131,32 @@ void Function::insertPhiInstruction() {
     for(const auto basicBlock:basicBlocks) {
         basicBlock->insertPhiInstruction();
     }
+}
+
+void Function::deletePhiInstruction() {
+    //复制副本
+    auto basic_blocks = vector(basicBlocks);
+    for(const auto basic_block:basic_blocks) {
+        basic_block->PhiToPC();
+    }
+    for(const auto basic_block:basicBlocks) {
+        basic_block->PCToMove();
+    }
+}
+
+void Function::activeAnalysis() {
+    if(activeVarAnalysis) {
+        //首先，让所有基本块构建use-def集
+        activeVarAnalysis->generateUseDef();
+        //然后，构建in-out集
+        activeVarAnalysis->generateInOut();
+    }
+}
+
+ActiveVarAnalysis *Function::getActiveVarAnalysis() const {
+    return activeVarAnalysis;
+}
+
+void Function::registerDistribute() {
+
 }
