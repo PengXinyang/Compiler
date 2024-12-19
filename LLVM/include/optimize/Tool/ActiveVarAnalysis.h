@@ -46,7 +46,7 @@ public:
     * debug使用
     * @return
     */
-    string printActiveAnalysis();
+    string printActiveAnalysis() const;
 };
 
 

@@ -134,7 +134,7 @@ Register *RegisterTool::loadMemoryOffset(Value *op, Register *reg, Register *reg
     }else {
         register_ = loadRegister(op, register_, reg_instead);
         //如果是int，左移两位表示*4；如果是char则不用移位
-        if(irType->isChar()) {}
+        if(irType->isChar()) {reg_instead = register_;}
         else new ITypeInstruction("sll",reg_instead,register_,2);
         vector<Register*> registers;
         registers.push_back(reg);

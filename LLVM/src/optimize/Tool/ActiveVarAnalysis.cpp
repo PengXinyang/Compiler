@@ -91,7 +91,7 @@ void ActiveVarAnalysis::generateInOut() {
     }
 }
 
-string ActiveVarAnalysis::printActiveAnalysis() {
+string ActiveVarAnalysis::printActiveAnalysis() const {
     ostringstream oss;
     vector<BasicBlock*>& blocks = function->getBasicBlocks();
     for (BasicBlock* block : blocks) {

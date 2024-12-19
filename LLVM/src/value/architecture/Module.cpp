@@ -158,7 +158,7 @@ void Module::printActiveAnalysis() {
     file<<"活跃变量分析如下"<<"\n\t";
     for(const auto function : functions) {
         file<<"函数: "<<function->value_name<<"\n\t\t";
-        file<<function->getActiveVarAnalysis()->printActiveAnalysis()<<"\n\t";
+        //file<<function->getActiveVarAnalysis()->printActiveAnalysis()<<"\n\t";
     }
 }
 
