@@ -78,16 +78,16 @@ string Function::toLLVM() {
 void Function::generateMIPS() {
     new MipsBlock(value_name.substr(1));
     MipsCell::resetFunction(this);
-    int num = min(4,static_cast<int>(params.size()));
+    int num = min(3,static_cast<int>(params.size()));
     for(int i=0;i<num;++i) {
-        //前三个参数只需要压栈，由a0-a2寄存器保存
+        //前三个参数只需要压栈，由a1-a3寄存器保存
         RegisterController::allocateRegister(
             params[i],
-            Register::getRegister(Register::regTransform(static_cast<int>(RegisterName::$a0) + i))
+            Register::getRegister(Register::regTransform(static_cast<int>(RegisterName::$a0) + i+1))
         );
         RegisterTool::moveValue(params[i]);
     }
-    for(int i=4;i<params.size();++i) {
+    for(int i=3;i<params.size();++i) {
         RegisterTool::moveValue(params[i]);
     }
     for(const auto basicBlock:basicBlocks) {

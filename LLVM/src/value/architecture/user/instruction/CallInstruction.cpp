@@ -73,11 +73,11 @@ void CallInstruction::generateMIPS() {
     //将实参的值压入被调用函数的堆栈或者寄存器中
     for(int paramNum = 1;paramNum < opValueChain.size();paramNum++) {
         Value* param = opValueChain[paramNum];
-        // 如果参数在前4个中，我们直接将他们放入a0-a3寄存器中
-        if(paramNum<=4) {
+        // 如果参数在前3个中，我们直接将他们放入a1-a3寄存器中
+        if(paramNum<=3) {
             RegisterTool::allocParamReg(
                 param,
-                Register::getRegister(Register::regTransform(static_cast<int>(RegisterName::$a0)+paramNum-1)),
+                Register::getRegister(Register::regTransform(static_cast<int>(RegisterName::$a0)+paramNum)),
                 stackOffset, registers
             );
         }else {
