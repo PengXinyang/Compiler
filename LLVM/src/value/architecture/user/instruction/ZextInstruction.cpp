@@ -12,6 +12,7 @@
 #include "structure/text/MipsInstruction/LSTypeInstruction.h"
 #include "structure/text/PseudoInstruction/LiInstruction.h"
 #include "value/architecture/ConstValue.h"
+#include <climits>
 
 ZextInstruction::ZextInstruction(const string& name, Value *value, IRType *final_type)
     : Instruction(final_type, name, "zext"){
@@ -44,8 +45,14 @@ void ZextInstruction::generateMIPS() {
             else {
                 int offset = MipsCell::getValueOffset(opValueChain[0]);
                 //new LSTypeInstruction("lbu","",register_,Register::getRegister(RegisterName::$sp),offset);
+                if(offset==INT_MAX ||
+                    register_ == Register::getRegister(RegisterName::$a1) ||
+                    register_ == Register::getRegister(RegisterName::$a2) ||
+                    register_ == Register::getRegister(RegisterName::$a3)) {
+                    //说明这个值没有存在栈中，或者是a1-a3这种不需要从栈中取
+                }
                 //取的时候，是取一个字符，用lb
-                new LSTypeInstruction("lb","",register_,Register::getRegister(RegisterName::$sp),offset);
+                else new LSTypeInstruction("lb","",register_,Register::getRegister(RegisterName::$sp),offset);
             }
             new ITypeInstruction("andi",register_,register_,0XFF);
             RegisterTool::allocaRegister(this, register_);
@@ -54,7 +61,13 @@ void ZextInstruction::generateMIPS() {
         else {
             //应当是bool转int，bool我使用sw和lw存取，所以其实就是重新存一下
             int offset = MipsCell::getValueOffset(opValueChain[0]);
-            new LSTypeInstruction("lw","",register_,Register::getRegister(RegisterName::$sp),offset);
+            if(offset==INT_MAX ||
+                    register_ == Register::getRegister(RegisterName::$a1) ||
+                    register_ == Register::getRegister(RegisterName::$a2) ||
+                    register_ == Register::getRegister(RegisterName::$a3)) {
+                //说明这个值没有存在栈中，或者是a1-a3这种不需要从栈中取
+                    }
+            else new LSTypeInstruction("lw","",register_,Register::getRegister(RegisterName::$sp),offset);
             RegisterTool::allocaRegister(this, register_);
             MipsCell::addValueOffset(this,MipsCell::getValueOffset(opValueChain[0]));
         }

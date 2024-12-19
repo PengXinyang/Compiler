@@ -87,7 +87,7 @@ public:
     /**
     * 进行活跃变量分析
     */
-    void activeAnalysis();
+    void activeAnalysis() const;
 
     /**
     * 获取活跃变量

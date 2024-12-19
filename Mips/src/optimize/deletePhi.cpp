@@ -10,6 +10,7 @@
 Module* deletePhi::module;
 void deletePhi::DeletePhi(Module* module) {
     deletePhi::module = module;
+    //module->activeAnalysis();
     vector<Function*>& functions = module->getFunctions();
     //首先，需要分配寄存器
     RegisterDistribute::init();

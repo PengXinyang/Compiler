@@ -104,6 +104,7 @@ void RegisterDistribute::distributeInBasicBlock(BasicBlock *block) {
     //遍历支配节点
     for(const auto dominate: dominate_children) {
         buildRegisterMap(dominate);
+        //distributeInBasicBlock(dominate);
     }
     //对于define移除，use分配寄存器
     for(auto def: defined) {

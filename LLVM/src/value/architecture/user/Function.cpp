@@ -136,7 +136,7 @@ void Function::insertPhiInstruction() {
 
 void Function::deletePhiInstruction() {
     //复制副本
-    auto basic_blocks = vector(basicBlocks);
+    auto basic_blocks = vector(basicBlocks.begin(), basicBlocks.end());
     for(const auto basic_block:basic_blocks) {
         basic_block->PhiToPC();
     }
@@ -145,7 +145,7 @@ void Function::deletePhiInstruction() {
     }
 }
 
-void Function::activeAnalysis() {
+void Function::activeAnalysis() const {
     if(activeVarAnalysis) {
         //首先，让所有基本块构建use-def集
         activeVarAnalysis->generateUseDef();

@@ -11,6 +11,7 @@
 #include "structure/text/MipsInstruction/LSTypeInstruction.h"
 #include "structure/text/PseudoInstruction/LiInstruction.h"
 #include "value/architecture/ConstValue.h"
+#include <climits>
 
 TruncInstruction::TruncInstruction(const string &name, Value *value, IRType *final_type)
     : Instruction(final_type, name, "trunc"){
@@ -44,7 +45,13 @@ void TruncInstruction::generateMIPS() {
             else {
                 //首先，要将这个数从栈帧取出来
                 int offset = MipsCell::getValueOffset(opValueChain[0]);
-                new LSTypeInstruction("lw","",register_,Register::getRegister(RegisterName::$sp),offset);
+                if(offset==INT_MAX ||
+                    register_ == Register::getRegister(RegisterName::$a1) ||
+                    register_ == Register::getRegister(RegisterName::$a2) ||
+                    register_ == Register::getRegister(RegisterName::$a3)) {
+                    //说明这个值没有存在栈中，或者是a1-a3这种不需要从栈中取
+                    }
+                else new LSTypeInstruction("lw","",register_,Register::getRegister(RegisterName::$sp),offset);
             }
             new ITypeInstruction("andi",register_,register_,0XFF);
             //存到栈中
