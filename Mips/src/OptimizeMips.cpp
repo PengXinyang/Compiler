@@ -22,6 +22,6 @@ OptimizeMips *OptimizeMips::getInstance() {
 void OptimizeMips::runOptimizeMips() {
     MipsOptimizerInit::init(module);
     //消除phi函数
-    //deletePhi::DeletePhi(module);
+    deletePhi::DeletePhi(module);
 
 }

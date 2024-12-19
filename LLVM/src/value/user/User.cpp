@@ -43,6 +43,8 @@ void User::dropOpValue() {
             [this](const Use* use) {
                 return use->getUser() == this;
         });
-        op_use_chain.erase(it);
+        if (it != op_use_chain.end()) {
+            op_use_chain.erase(it, op_use_chain.end()); // 删除指定范围的元素
+        }
     }
 }

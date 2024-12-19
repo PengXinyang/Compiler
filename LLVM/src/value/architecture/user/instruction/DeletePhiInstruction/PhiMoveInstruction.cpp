@@ -30,6 +30,9 @@ void PhiMoveInstruction::setDestination(Value *destination) {
 void PhiMoveInstruction::setSource(Value *source) {
     this->source = source;
 }
+string PhiMoveInstruction::toLLVM() {
+    return "move "+ destination->value_type->toLLVM() + " " + destination->value_name + ", " + source->value_name;
+}
 
 void PhiMoveInstruction::generateMIPS() {
     Instruction::generateMIPS();

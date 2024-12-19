@@ -46,6 +46,8 @@ public:
     void activeAnalysis();
     //Debug用，输出活跃变量
     void printActiveAnalysis();
+    //debug用，输出寄存器的分配
+    void printRegisterDistribute();
 };
 
 

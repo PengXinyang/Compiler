@@ -12,6 +12,7 @@
 #include "optimize/data_structure/DominantTree.h"
 #include "optimize/Tool/ActiveVarAnalysis.h"
 #include "Register/RegisterController.h"
+#include "Register/RegisterDistribute.h"
 #include "Register/RegisterTool.h"
 #include "structure/text/MipsBlock.h"
 #include "type/IRName.h"
@@ -158,5 +159,16 @@ ActiveVarAnalysis *Function::getActiveVarAnalysis() const {
 }
 
 void Function::registerDistribute() {
+    RegisterDistribute::setRegisterToValueMap(unordered_map<Register*, Value*>());
+    RegisterDistribute::setValueToRegisterMap(unordered_map<Value*, Register*>());
+    RegisterDistribute::distributeInBasicBlock(basicBlocks[0]);
+    valueRegisterMap = RegisterDistribute::getValueToRegisterMap();
+}
 
+string Function::printRegisterDistribute() {
+    ostringstream oss;
+    for(const auto [fst, snd] : valueRegisterMap) {
+        oss<<fst->value_name<<" 分配为 "<<snd->toMips()<<"\n\t\t";
+    }
+    return oss.str();
 }

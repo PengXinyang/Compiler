@@ -37,11 +37,11 @@ int MipsCell::getValueOffset(Value *value) {
 }
 
 vector<Register *> MipsCell::getRegisterDistribute() {
-    vector<Register *> registers;
+    unordered_set<Register *> registerSet;
     unordered_map<Value* , Register *> registerMap = RegisterController::getValueRegisterMap();
-    registers.reserve(registerMap.size());
     for(auto &[fst, snd] : registerMap) {
-        registers.push_back(snd);
+        registerSet.insert(snd);
     }
+    auto registers = vector(registerSet.begin(), registerSet.end());
     return registers;
 }

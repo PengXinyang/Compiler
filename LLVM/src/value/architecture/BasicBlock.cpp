@@ -199,9 +199,9 @@ void BasicBlock::PhiToPC() {
             if(Instruction *instruction = *it; instanceof<PhiInstruction>(instruction)) {
                 auto* phi_instruction = dynamic_cast<PhiInstruction*>(instruction);
                 phi_instruction->ChangePhiToPC(PCInstructions);
+                phi_instruction->dropOpValue();
                 //移出it
                 it = instructions.erase(it);
-                phi_instruction->dropOpValue();
             }else ++it;
         }
     }

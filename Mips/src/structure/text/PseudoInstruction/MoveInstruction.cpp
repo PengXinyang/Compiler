@@ -13,5 +13,5 @@ MoveInstruction::MoveInstruction(Register *dst, Register *src) {
 }
 
 string MoveInstruction::toMips() {
-    return "move " + this->dst->toMips() + this->src->toMips();
+    return "move " + this->dst->toMips() +" "+ this->src->toMips();
 }

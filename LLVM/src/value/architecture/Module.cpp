@@ -161,3 +161,17 @@ void Module::printActiveAnalysis() {
         file<<function->getActiveVarAnalysis()->printActiveAnalysis()<<"\n\t";
     }
 }
+
+void Module::printRegisterDistribute() {
+    const string filename = "register_distribute_debug.txt";
+    ofstream file(filename,ios::out);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+    file<<"寄存器分配规则如下"<<"\n\t";
+    for(const auto function : functions) {
+        file<<"函数: "<<function->value_name<<"\n\t\t";
+        file<<function->printRegisterDistribute()<<"\n\t";
+    }
+}

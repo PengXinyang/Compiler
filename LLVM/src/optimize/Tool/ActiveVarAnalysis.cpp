@@ -33,6 +33,8 @@ void ActiveVarAnalysis::generateUseDef() {
             if(instanceof<PhiInstruction>(instruction)) {
                 dynamic_cast<PhiInstruction *>(instruction)->addIntoUse();
             }
+        }
+        for(auto instruction:block->getInstructions()) {
             instruction->generateUseDef();
         }
     }
@@ -61,14 +63,20 @@ void ActiveVarAnalysis::generateInOut() {
             //按照公式，求in
             // 计算 out - def
             unordered_set<Value*>outMinusDef;
-            set_difference(out[block].begin(), out[block].end(), def[block].begin(), def[block].end(),
-                                std::inserter(outMinusDef, outMinusDef.end()));
+            for(auto out_number:out[block]) {
+                if(def[block].count(out_number)==0) {
+                    outMinusDef.insert(out_number);
+                }
+            }
 
             // 计算 in = use + (out - def)
             in_set = use[block];
             in_set.insert(outMinusDef.begin(), outMinusDef.end());
             //判断原来的in和新生成的in是否一致，如果不一致，标记为true
-            is_in_change = !equal(in_set.begin(), in_set.end(), in[block].begin(), in[block].end());
+            is_in_change = in_set!=in[block];
+            if(is_in_change) {
+                printf("debug");
+            }
             in[block] = in_set;
         }
     }
@@ -81,19 +89,19 @@ string ActiveVarAnalysis::printActiveAnalysis() {
         oss<<"基本块: "<<block->value_name<<"\n\t\t\t";
         oss<<"use集合: "<<"\n\t\t\t\t";
         for(const auto value: block->getUseSet()) {
-            oss<<value->value_name<<"\n\t\t\t\t";
+            oss<<value->toLLVM()<<"\n\t\t\t\t";
         }
         oss<<"\n\t\t\tdef集合: "<<"\n\t\t\t\t";
         for(const auto value: block->getDefSet()) {
-            oss<<value->value_name<<"\n\t\t\t\t";
+            oss<<value->toLLVM()<<"\n\t\t\t\t";
         }
         oss<<"\n\t\t\tin集合: "<<"\n\t\t\t\t";
         for(const auto value: block->getInSet()) {
-            oss<<value->value_name<<"\n\t\t\t\t";
+            oss<<value->toLLVM()<<"\n\t\t\t\t";
         }
         oss<<"\n\t\t\tout集合: "<<"\n\t\t\t\t";
         for(const auto value: block->getOutSet()) {
-            oss<<value->value_name<<"\n\t\t\t\t";
+            oss<<value->toLLVM()<<"\n\t\t\t\t";
         }
         oss<<"\n\t\t";
     }

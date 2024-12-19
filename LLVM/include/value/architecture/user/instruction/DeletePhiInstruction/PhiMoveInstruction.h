@@ -22,6 +22,7 @@ public:
     void setDestination(Value* destination);
     [[nodiscard]] Value* getSource() const;
     [[nodiscard]] Value* getDestination() const;
+    string toLLVM() override;
     void generateMIPS() override;
 };
 

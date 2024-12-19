@@ -13,10 +13,15 @@ void deletePhi::DeletePhi(Module* module) {
     vector<Function*>& functions = module->getFunctions();
     //首先，需要分配寄存器
     RegisterDistribute::init();
+    for(const auto f : functions) {
+        f->registerDistribute();
+    }
     //随后，消除phi指令
     for(const auto f : functions) {
         f->deletePhiInstruction();
     }
+    //输出debug语句
+    module->printRegisterDistribute();
 }
 
 

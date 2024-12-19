@@ -99,6 +99,11 @@ public:
      * 用于寄存器分配
      */
     void registerDistribute();
+
+    /**
+    * debug输出寄存器分配
+    */
+    string printRegisterDistribute();
 };
 
 

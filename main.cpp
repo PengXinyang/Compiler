@@ -46,14 +46,15 @@ int main() {
             optimize_ir->runOptimizeIR();
         }
         generate_ir->printLLVMIR();
-        MipsGenerate* mips_generate = MipsGenerate::getInstance(generate_ir->getModule());
+        Module* module = generate_ir->getModule();
         //MipsGenerate* mips_generate = MipsGenerate::getInstance(new Module());
-        mips_generate->generateMips();
         if(ConfigOptimizer::isConfigOptimize()) {
             //执行后端优化
             OptimizeMips* optimize_mips = OptimizeMips::getInstance();
             optimize_mips->runOptimizeMips();
         }
+        MipsGenerate* mips_generate = MipsGenerate::getInstance(module);
+        mips_generate->generateMips();
         mips_generate->printMips();
     }
     //删除类
