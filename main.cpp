@@ -28,9 +28,11 @@ int main() {
     Lexer *lexer = Lexer::getLexerInstance();
     lexer->setCharPtr(const_cast<char *>(source.c_str()));
     lexer->handleSource();
+    lexer->printRight();
     //下面是语法分析处理程序
     Parser* parser = Parser::getParserInstance();
     parser->ParserHandle();
+    parser->printParser();
     //下面是符号表分析程序
     SymbolHandle* symbol_handle = SymbolHandle::getSymbolHandleInstance();
     symbol_handle->handleSymbol();
