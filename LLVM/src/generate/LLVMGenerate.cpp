@@ -227,8 +227,32 @@ Value *LLVMGenerate::ConstDefIR(TreeNode *AstRoot) {
             const_symbol->value = instruction;
             //子节点最后一位是constInitVal，说明需要赋值，store指令
             Value* pointer = instruction;
-            vector<Value*> value_list = symbol_value_instance->genConstValuesIR(AstRoot->sonNode[AstRoot->son_num-1]);
+            vector<Value*> value_list;
             int offset = 0;
+            if(!initString.empty()) {
+                //注意：要去掉首尾的引号
+                for(int i = 1; i<initString.length()-1; ++i) {
+                    char c = initString[i];
+                    if(c=='\\' && i+1<initString.length()-1) {
+                        //说明后面可能有转义字符
+                        switch(initString[i+1]) {
+                            case 'a': c = 7; i++;break;
+                            case 'b': c = 8;i++;break;
+                            case 't': c = 9;i++;break;
+                            case 'n': c = 10;i++;break;
+                            case 'v': c = 11;i++;break;
+                            case 'f': c = 12;i++;break;
+                            case '\"': c = 34;i++;break;
+                            case '\'': c = 39;i++;break;
+                            case '\\': c = 92;i++;break;
+                            case '0': c = 0;i++;break;
+                            default: c = 92;
+                        }
+                    }
+                    value_list.push_back(new ConstValue(new IRChar(), to_string(c)));
+                }
+            }
+            else value_list = symbol_value_instance->genConstValuesIR(AstRoot->sonNode[AstRoot->son_num-1]);
             for(Value* v: value_list) {
                 instruction = new GetelementptrInstruction(
                     const_symbol->get_ir_type(),
@@ -347,7 +371,24 @@ Value *LLVMGenerate::VarDefIR(TreeNode *AstRoot) {
                     //如果第一个子节点是常量字符串，说明是用字符串赋值
                     //注意：要去掉首尾的引号
                     for(int i = 1; i<initString.length()-1; ++i) {
-                        value_list.push_back(new ConstValue(new IRChar(), to_string(initString[i])));
+                        char c = initString[i];
+                        if(c=='\\' && i+1<initString.length()-1) {
+                            //说明后面可能有转义字符
+                            switch(initString[i+1]) {
+                                case 'a': c = 7; i++;break;
+                                case 'b': c = 8;i++;break;
+                                case 't': c = 9;i++;break;
+                                case 'n': c = 10;i++;break;
+                                case 'v': c = 11;i++;break;
+                                case 'f': c = 12;i++;break;
+                                case '\"': c = 34;i++;break;
+                                case '\'': c = 39;i++;break;
+                                case '\\': c = 92;i++;break;
+                                case '0': c = 0;i++;break;
+                                default: c = 92;
+                            }
+                        }
+                        value_list.push_back(new ConstValue(new IRChar(), to_string(c)));
                     }
                     //用字符串初始化需要末尾补一个0
                     value_list.push_back(new ConstValue(new IRChar(), to_string(0)));

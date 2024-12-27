@@ -60,7 +60,24 @@ void GlobalVariable::generateMIPS() {
                     vector<int> vec;
                     vec.reserve(initString.length());
                     for(int i = 0; i < initString.length(); i++) {
-                        vec.push_back(initString[i]);
+                        char c = initString[i];
+                        if(c=='\\' && i+1<initString.length()) {
+                            //说明后面可能有转义字符
+                            switch(initString[i+1]) {
+                                case 'a': c = 7; i++;break;
+                                case 'b': c = 8;i++;break;
+                                case 't': c = 9;i++;break;
+                                case 'n': c = 10;i++;break;
+                                case 'v': c = 11;i++;break;
+                                case 'f': c = 12;i++;break;
+                                case '\"': c = 34;i++;break;
+                                case '\'': c = 39;i++;break;
+                                case '\\': c = 92;i++;break;
+                                case '0': c = 0;i++;break;
+                                default: c = 92;
+                            }
+                        }
+                        vec.push_back(c);
                     }
                     new ByteStructure(value_name.substr(1),to_string(dynamic_cast<IRArray*>(ir_type)->calculate_dims()),vec);
                 }
