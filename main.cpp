@@ -19,8 +19,8 @@ int main() {
     //优化开关
     ConfigOptimizer::setConfigOptimize(true);
     ConfigOptimizer::initConfigOptimizer();
-    /*LLVMOptimizerInit::setIsOptimize(false);
-    LLVMOptimizerInit::setIsConstFold(true);*/
+    LLVMOptimizerInit::setIsOptimize(false);
+    LLVMOptimizerInit::setIsConstFold(true);
 
     source = FileProcess::readFileIntoString("testfile.txt");
     //下面是词法分析处理程序
